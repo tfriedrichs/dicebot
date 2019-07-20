@@ -1,9 +1,9 @@
-package io.github.tfriedrichs.dicebot;
+package io.github.tfriedrichs.dicebot.result;
 
 import io.github.tfriedrichs.dicebot.evaluator.DiceRollEvaluator;
 import java.util.Arrays;
 
-public class DiceRoll {
+public class DiceRoll implements DiceRollResult {
 
     private final DiceRollEvaluator evaluator;
     private final int[] rolls;

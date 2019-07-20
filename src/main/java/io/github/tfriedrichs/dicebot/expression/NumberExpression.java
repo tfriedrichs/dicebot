@@ -1,7 +1,7 @@
 package io.github.tfriedrichs.dicebot.expression;
 
-import io.github.tfriedrichs.dicebot.DiceRoll;
-import io.github.tfriedrichs.dicebot.evaluator.SumEvaluator;
+import io.github.tfriedrichs.dicebot.result.DiceRollResult;
+import io.github.tfriedrichs.dicebot.result.FixedNumberResult;
 
 public class NumberExpression implements DiceExpression {
 
@@ -12,7 +12,7 @@ public class NumberExpression implements DiceExpression {
     }
 
     @Override
-    public DiceRoll roll() {
-        return new DiceRoll(new SumEvaluator(), value);
+    public DiceRollResult roll() {
+        return new FixedNumberResult(value);
     }
 }

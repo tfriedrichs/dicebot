@@ -3,6 +3,7 @@ package io.github.tfriedrichs.dicebot.expression;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.inOrder;
@@ -11,6 +12,8 @@ import static org.mockito.Mockito.when;
 
 import io.github.tfriedrichs.dicebot.evaluator.DiceRollEvaluator;
 import io.github.tfriedrichs.dicebot.modifier.DiceRollModifier;
+import io.github.tfriedrichs.dicebot.result.DiceRoll;
+import io.github.tfriedrichs.dicebot.result.DiceRollResult;
 import io.github.tfriedrichs.dicebot.source.FixedRandomSource;
 import io.github.tfriedrichs.dicebot.source.RandomSource;
 import org.junit.jupiter.api.Test;
@@ -98,7 +101,10 @@ class DiceRollExpressionTest {
             .withNumberOfSides(6)
             .withModifier(modifier)
             .build();
-        int[] roll = expression.roll().getRolls();
+
+        DiceRollResult result = expression.roll();
+        assertTrue(result instanceof DiceRoll);
+        int[] roll = ((DiceRoll) result).getRolls();
         assertArrayEquals(new int[]{3, 3, 3}, roll);
     }
 

@@ -1,9 +1,10 @@
 package io.github.tfriedrichs.dicebot.expression;
 
-import io.github.tfriedrichs.dicebot.DiceRoll;
 import io.github.tfriedrichs.dicebot.evaluator.DiceRollEvaluator;
 import io.github.tfriedrichs.dicebot.evaluator.SumEvaluator;
 import io.github.tfriedrichs.dicebot.modifier.DiceRollModifier;
+import io.github.tfriedrichs.dicebot.result.DiceRoll;
+import io.github.tfriedrichs.dicebot.result.DiceRollResult;
 import io.github.tfriedrichs.dicebot.source.RandomSource;
 import io.github.tfriedrichs.dicebot.source.ThreadLocalRandomSource;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class DiceRollExpression implements DiceExpression {
     }
 
     @Override
-    public DiceRoll roll() {
+    public DiceRollResult roll() {
         int numberOfDice = this.numberOfDice.roll().evaluate();
         if (numberOfDice < 0) {
             throw new IllegalArgumentException("Number of dice must not be negative");
@@ -49,10 +50,10 @@ public class DiceRollExpression implements DiceExpression {
 
     public static class Builder {
 
-        private final List<DiceRollModifier> modifiers = new ArrayList<>();
         private RandomSource randomSource = new ThreadLocalRandomSource();
         private DiceExpression numberOfDice = new NumberExpression(1);
         private DiceExpression numberOfSides = new NumberExpression(6);
+        private final List<DiceRollModifier> modifiers = new ArrayList<>();
         private DiceRollEvaluator evaluator = new SumEvaluator();
 
         public Builder withRandomSource(RandomSource randomSource) {
