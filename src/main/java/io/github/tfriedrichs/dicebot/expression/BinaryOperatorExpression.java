@@ -2,7 +2,7 @@ package io.github.tfriedrichs.dicebot.expression;
 
 import io.github.tfriedrichs.dicebot.result.BinaryOperatorResult;
 import io.github.tfriedrichs.dicebot.result.BinaryOperatorResult.Operator;
-import io.github.tfriedrichs.dicebot.result.DiceRollResult;
+import io.github.tfriedrichs.dicebot.result.DiceResult;
 
 public class BinaryOperatorExpression implements DiceExpression {
 
@@ -19,7 +19,7 @@ public class BinaryOperatorExpression implements DiceExpression {
     }
 
     @Override
-    public DiceRollResult roll() {
+    public DiceResult roll() {
         return new BinaryOperatorResult(operator, left.roll(), right.roll());
     }
 }

@@ -9,27 +9,27 @@ class BinaryOperatorResultTest {
 
     @Test
     void plusShouldAdd() {
-        DiceRollResult left = new FixedNumberResult(3);
-        DiceRollResult right = new FixedNumberResult(12);
-        DiceRollResult result = new BinaryOperatorResult(Operator.PLUS, left, right);
-        assertEquals(15, result.evaluate());
+        DiceResult left = new FixedNumberResult(3);
+        DiceResult right = new FixedNumberResult(12);
+        DiceResult result = new BinaryOperatorResult(Operator.PLUS, left, right);
+        assertEquals(15, result.getValue());
     }
 
     @Test
     void minusShouldSubtract() {
-        DiceRollResult left = new FixedNumberResult(3);
-        DiceRollResult right = new FixedNumberResult(12);
-        DiceRollResult result = new BinaryOperatorResult(Operator.MINUS, left, right);
-        assertEquals(-9, result.evaluate());
+        DiceResult left = new FixedNumberResult(3);
+        DiceResult right = new FixedNumberResult(12);
+        DiceResult result = new BinaryOperatorResult(Operator.MINUS, left, right);
+        assertEquals(-9, result.getValue());
     }
 
 
     @Test
     void timesShouldMultiply() {
-        DiceRollResult left = new FixedNumberResult(3);
-        DiceRollResult right = new FixedNumberResult(12);
-        DiceRollResult result = new BinaryOperatorResult(Operator.TIMES, left, right);
-        assertEquals(36, result.evaluate());
+        DiceResult left = new FixedNumberResult(3);
+        DiceResult right = new FixedNumberResult(12);
+        DiceResult result = new BinaryOperatorResult(Operator.TIMES, left, right);
+        assertEquals(36, result.getValue());
     }
 
 }

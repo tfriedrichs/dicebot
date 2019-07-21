@@ -1,7 +1,9 @@
 package io.github.tfriedrichs.dicebot.evaluator;
 
+import io.github.tfriedrichs.dicebot.result.DiceRoll;
+
 public interface DiceRollEvaluator {
 
-    int evaluate(int[] rolls);
+    int evaluate(DiceRoll roll);
 
 }

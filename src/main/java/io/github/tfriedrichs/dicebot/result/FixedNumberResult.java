@@ -1,6 +1,6 @@
 package io.github.tfriedrichs.dicebot.result;
 
-public class FixedNumberResult implements DiceRollResult {
+public class FixedNumberResult implements DiceResult {
 
     private final int value;
 
@@ -9,7 +9,7 @@ public class FixedNumberResult implements DiceRollResult {
     }
 
     @Override
-    public int evaluate() {
-        return value;
+    public int getValue() {
+        return this.value;
     }
 }

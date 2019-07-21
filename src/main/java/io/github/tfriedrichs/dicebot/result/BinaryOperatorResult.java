@@ -2,34 +2,34 @@ package io.github.tfriedrichs.dicebot.result;
 
 import java.util.function.IntBinaryOperator;
 
-public class BinaryOperatorResult implements DiceRollResult {
+public class BinaryOperatorResult implements DiceResult {
 
     private final Operator operator;
-    private final DiceRollResult left;
-    private final DiceRollResult right;
+    private final DiceResult left;
+    private final DiceResult right;
 
     public BinaryOperatorResult(
-        Operator operator, DiceRollResult left,
-        DiceRollResult right) {
+        Operator operator, DiceResult left,
+        DiceResult right) {
         this.operator = operator;
         this.left = left;
         this.right = right;
     }
 
     @Override
-    public int evaluate() {
-        return operator.getOperator().applyAsInt(left.evaluate(), right.evaluate());
+    public int getValue() {
+        return operator.getOperator().applyAsInt(left.getValue(), right.getValue());
     }
 
     public Operator getOperator() {
         return operator;
     }
 
-    public DiceRollResult getLeft() {
+    public DiceResult getLeft() {
         return left;
     }
 
-    public DiceRollResult getRight() {
+    public DiceResult getRight() {
         return right;
     }
 

@@ -1,7 +1,9 @@
 package io.github.tfriedrichs.dicebot.modifier;
 
+import io.github.tfriedrichs.dicebot.result.DiceRoll;
+
 public interface DiceRollModifier {
 
-    int[] modifyRoll(int[] roll, int min, int max);
+    DiceRoll modifyRoll(DiceRoll roll, int min, int max);
 
 }

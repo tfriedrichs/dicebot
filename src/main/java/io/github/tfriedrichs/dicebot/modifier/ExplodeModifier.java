@@ -1,10 +1,10 @@
 package io.github.tfriedrichs.dicebot.modifier;
 
+import io.github.tfriedrichs.dicebot.result.DiceRoll;
+import io.github.tfriedrichs.dicebot.result.DiceRoll.MetaData;
 import io.github.tfriedrichs.dicebot.source.RandomSource;
 import io.github.tfriedrichs.dicebot.util.RecursionDepthException;
-import java.util.Arrays;
 import java.util.function.IntPredicate;
-import java.util.stream.IntStream;
 
 public class ExplodeModifier implements DiceRollModifier {
 
@@ -25,22 +25,28 @@ public class ExplodeModifier implements DiceRollModifier {
 
 
     @Override
-    public int[] modifyRoll(int[] roll, int min, int max) {
-        int[] total = Arrays.copyOf(roll, roll.length);
-        int[] current = roll;
+    public DiceRoll modifyRoll(DiceRoll roll, int min, int max) {
+        DiceRoll total = roll;
+        DiceRoll current = roll;
         int depth = 0;
         while (true) {
             depth++;
             if (depth > RECURSION_DEPTH) {
                 throw new RecursionDepthException("Explode recursion depth reached.");
             }
-            int numberOfExplosions = Math
-                .toIntExact(IntStream.of(current).filter(explodeIf).count());
+            int numberOfExplosions = 0;
+            for (int i = 0; i < current.getRolls().length; i++) {
+                if (explodeIf.test(current.getRolls()[i])) {
+                    numberOfExplosions++;
+                    current.addMetaDataToRoll(i, MetaData.EXPLODED);
+                }
+            }
             if (numberOfExplosions == 0) {
                 break;
             }
-            current = randomSource.get(numberOfExplosions, min, max).toArray();
-            total = IntStream.concat(IntStream.of(total), IntStream.of(current)).toArray();
+            current = new DiceRoll(MetaData.ADDED,
+                randomSource.get(numberOfExplosions, min, max).toArray());
+            total = DiceRoll.concat(total, current);
         }
 
         return total;

@@ -12,7 +12,7 @@ class BinaryOperatorExpressionTest {
         DiceExpression left = new NumberExpression(3);
         DiceExpression right = new NumberExpression(12);
         DiceExpression result = new BinaryOperatorExpression(Operator.PLUS, left, right);
-        assertEquals(15, result.roll().evaluate());
+        assertEquals(15, result.roll().getValue());
     }
 
     @Test
@@ -20,7 +20,7 @@ class BinaryOperatorExpressionTest {
         DiceExpression left = new NumberExpression(3);
         DiceExpression right = new NumberExpression(12);
         DiceExpression result = new BinaryOperatorExpression(Operator.MINUS, left, right);
-        assertEquals(-9, result.roll().evaluate());
+        assertEquals(-9, result.roll().getValue());
     }
 
 
@@ -29,7 +29,7 @@ class BinaryOperatorExpressionTest {
         DiceExpression left = new NumberExpression(3);
         DiceExpression right = new NumberExpression(12);
         DiceExpression result = new BinaryOperatorExpression(Operator.TIMES, left, right);
-        assertEquals(36, result.roll().evaluate());
+        assertEquals(36, result.roll().getValue());
     }
 
 }

@@ -3,6 +3,7 @@ package io.github.tfriedrichs.dicebot.expression;
 import io.github.tfriedrichs.dicebot.evaluator.DiceRollEvaluator;
 import io.github.tfriedrichs.dicebot.evaluator.SumEvaluator;
 import io.github.tfriedrichs.dicebot.modifier.DiceRollModifier;
+import io.github.tfriedrichs.dicebot.result.DiceResult;
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
 import io.github.tfriedrichs.dicebot.result.DiceRollResult;
 import io.github.tfriedrichs.dicebot.source.RandomSource;
@@ -31,21 +32,22 @@ public class DiceRollExpression implements DiceExpression {
     }
 
     @Override
-    public DiceRollResult roll() {
-        int numberOfDice = this.numberOfDice.roll().evaluate();
+    public DiceResult roll() {
+        int numberOfDice = this.numberOfDice.roll().getValue();
         if (numberOfDice < 0) {
             throw new IllegalArgumentException("Number of dice must not be negative");
         }
-        int numberOfSides = this.numberOfSides.roll().evaluate();
+        int numberOfSides = this.numberOfSides.roll().getValue();
         if (numberOfSides < 0) {
             throw new IllegalArgumentException("Number of sides must not be negative");
         }
         int[] rolls = randomSource.get(numberOfDice, 1,
             numberOfSides + 1).toArray();
+        DiceRoll result = new DiceRoll(rolls);
         for (DiceRollModifier modifier : modifiers) {
-            rolls = modifier.modifyRoll(rolls, 1, numberOfSides + 1);
+            result = modifier.modifyRoll(result, 1, numberOfSides + 1);
         }
-        return new DiceRoll(evaluator, rolls);
+        return new DiceRollResult(evaluator.evaluate(result), result);
     }
 
     public static class Builder {

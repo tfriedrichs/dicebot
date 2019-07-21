@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import io.github.tfriedrichs.dicebot.evaluator.DiceRollEvaluator;
 import io.github.tfriedrichs.dicebot.modifier.DiceRollModifier;
+import io.github.tfriedrichs.dicebot.result.DiceResult;
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
 import io.github.tfriedrichs.dicebot.result.DiceRollResult;
 import io.github.tfriedrichs.dicebot.source.FixedRandomSource;
@@ -29,8 +30,8 @@ class DiceRollExpressionTest {
             .withNumberOfDice(1)
             .withNumberOfSides(6)
             .build();
-        assertEquals(1, expression.roll().evaluate());
-        assertEquals(2, expression.roll().evaluate());
+        assertEquals(1, expression.roll().getValue());
+        assertEquals(2, expression.roll().getValue());
     }
 
     @Test
@@ -45,8 +46,8 @@ class DiceRollExpressionTest {
                 .build())
             .withNumberOfSides(6)
             .build();
-        assertEquals(2, expression.roll().evaluate());
-        assertEquals(10, expression.roll().evaluate());
+        assertEquals(2, expression.roll().getValue());
+        assertEquals(10, expression.roll().getValue());
     }
 
     @Test
@@ -61,8 +62,8 @@ class DiceRollExpressionTest {
                 .withNumberOfSides(6)
                 .build())
             .build();
-        assertEquals(5, expression.roll().evaluate());
-        assertEquals(6, expression.roll().evaluate());
+        assertEquals(5, expression.roll().getValue());
+        assertEquals(6, expression.roll().getValue());
     }
 
     @Test
@@ -73,7 +74,7 @@ class DiceRollExpressionTest {
             .withNumberOfDice(-2)
             .withNumberOfSides(6)
             .build();
-        assertThrows(IllegalArgumentException.class, () -> expression.roll().evaluate());
+        assertThrows(IllegalArgumentException.class, () -> expression.roll().getValue());
 
     }
 
@@ -86,15 +87,15 @@ class DiceRollExpressionTest {
             .withNumberOfDice(23)
             .withNumberOfSides(-2)
             .build();
-        assertThrows(IllegalArgumentException.class, () -> expression.roll().evaluate());
+        assertThrows(IllegalArgumentException.class, () -> expression.roll().getValue());
     }
 
     @Test
     void shouldCorrectlyApplyModifiers() {
         RandomSource source = new FixedRandomSource(1, 2, 3, 4, 5);
         DiceRollModifier modifier = mock(DiceRollModifier.class);
-        when(modifier.modifyRoll(any(int[].class), anyInt(), anyInt()))
-            .thenReturn(new int[]{3, 3, 3});
+        when(modifier.modifyRoll(any(DiceRoll.class), anyInt(), anyInt()))
+            .thenReturn(new DiceRoll(3, 3, 3));
         DiceRollExpression expression = new DiceRollExpression.Builder()
             .withRandomSource(source)
             .withNumberOfDice(3)
@@ -102,9 +103,9 @@ class DiceRollExpressionTest {
             .withModifier(modifier)
             .build();
 
-        DiceRollResult result = expression.roll();
-        assertTrue(result instanceof DiceRoll);
-        int[] roll = ((DiceRoll) result).getRolls();
+        DiceResult result = expression.roll();
+        assertTrue(result instanceof DiceRollResult);
+        int[] roll = ((DiceRollResult) result).getRolls();
         assertArrayEquals(new int[]{3, 3, 3}, roll);
     }
 
@@ -112,14 +113,14 @@ class DiceRollExpressionTest {
     void shouldCorrectlyApplyModifiersInOrder() {
         RandomSource source = new FixedRandomSource(1, 2, 3, 4, 5);
         DiceRollModifier modifier1 = mock(DiceRollModifier.class);
-        when(modifier1.modifyRoll(any(int[].class), anyInt(), anyInt()))
-            .thenReturn(new int[]{2, 2, 2});
+        when(modifier1.modifyRoll(any(DiceRoll.class), anyInt(), anyInt()))
+            .thenReturn(new DiceRoll(2, 2, 2));
         DiceRollModifier modifier2 = mock(DiceRollModifier.class);
-        when(modifier2.modifyRoll(any(int[].class), anyInt(), anyInt()))
-            .thenReturn(new int[]{3, 3, 3});
+        when(modifier2.modifyRoll(any(DiceRoll.class), anyInt(), anyInt()))
+            .thenReturn(new DiceRoll(3, 3, 3));
         DiceRollModifier modifier3 = mock(DiceRollModifier.class);
-        when(modifier3.modifyRoll(any(int[].class), anyInt(), anyInt()))
-            .thenReturn(new int[]{4, 4, 4});
+        when(modifier3.modifyRoll(any(DiceRoll.class), anyInt(), anyInt()))
+            .thenReturn(new DiceRoll(4, 4, 4));
 
         InOrder inOrder = inOrder(modifier1, modifier2, modifier3);
         DiceRollExpression expression = new DiceRollExpression.Builder()
@@ -133,9 +134,9 @@ class DiceRollExpressionTest {
 
         expression.roll();
 
-        inOrder.verify(modifier1).modifyRoll(new int[]{1, 2, 3}, 1, 7);
-        inOrder.verify(modifier2).modifyRoll(new int[]{2, 2, 2}, 1, 7);
-        inOrder.verify(modifier3).modifyRoll(new int[]{3, 3, 3}, 1, 7);
+        inOrder.verify(modifier1).modifyRoll(any(DiceRoll.class), anyInt(), anyInt());
+        inOrder.verify(modifier2).modifyRoll(any(DiceRoll.class), anyInt(), anyInt());
+        inOrder.verify(modifier3).modifyRoll(any(DiceRoll.class), anyInt(), anyInt());
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -143,7 +144,7 @@ class DiceRollExpressionTest {
     void shouldUseAssignedEvaluator() {
         RandomSource source = new FixedRandomSource(1, 2, 3);
         DiceRollEvaluator evaluator = mock(DiceRollEvaluator.class);
-        when(evaluator.evaluate(any(int[].class))).thenReturn(100);
+        when(evaluator.evaluate(any(DiceRoll.class))).thenReturn(100);
         InOrder inOrder = inOrder(evaluator);
         DiceRollExpression expression = new DiceRollExpression.Builder()
             .withRandomSource(source)
@@ -151,8 +152,8 @@ class DiceRollExpressionTest {
             .withNumberOfSides(6)
             .withEvaluator(evaluator)
             .build();
-        assertEquals(100, expression.roll().evaluate());
-        inOrder.verify(evaluator).evaluate(new int[]{1});
+        assertEquals(100, expression.roll().getValue());
+        inOrder.verify(evaluator).evaluate(any(DiceRoll.class));
         inOrder.verifyNoMoreInteractions();
     }
 

@@ -1,12 +1,12 @@
 package io.github.tfriedrichs.dicebot.expression;
 
 import io.github.tfriedrichs.dicebot.result.BinaryOperatorResult.Operator;
-import io.github.tfriedrichs.dicebot.result.DiceRollResult;
+import io.github.tfriedrichs.dicebot.result.DiceResult;
 
 
 public interface DiceExpression {
 
-    DiceRollResult roll();
+    DiceResult roll();
 
     static DiceExpression plus(DiceExpression left, DiceExpression right) {
         return new BinaryOperatorExpression(Operator.PLUS, left, right);

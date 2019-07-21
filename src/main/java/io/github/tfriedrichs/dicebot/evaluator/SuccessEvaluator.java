@@ -1,7 +1,8 @@
 package io.github.tfriedrichs.dicebot.evaluator;
 
+import io.github.tfriedrichs.dicebot.result.DiceRoll;
+import io.github.tfriedrichs.dicebot.result.DiceRoll.MetaData;
 import java.util.function.IntPredicate;
-import java.util.stream.IntStream;
 
 public class SuccessEvaluator implements DiceRollEvaluator {
 
@@ -16,8 +17,16 @@ public class SuccessEvaluator implements DiceRollEvaluator {
     }
 
     @Override
-    public int evaluate(int[] rolls) {
-        return Math.toIntExact(IntStream.of(rolls).filter(successIf).count());
+    public int evaluate(DiceRoll roll) {
+        int result = 0;
+        int[] rolls = roll.getRolls();
+        for (int i = 0; i < rolls.length; i++) {
+            if (successIf.test(rolls[i])) {
+                roll.addMetaDataToRoll(i, MetaData.SUCCESS);
+                result++;
+            }
+        }
+        return result;
     }
 
 }
