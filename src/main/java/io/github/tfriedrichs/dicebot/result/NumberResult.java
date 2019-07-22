@@ -1,10 +1,10 @@
 package io.github.tfriedrichs.dicebot.result;
 
-public class FixedNumberResult implements DiceResult {
+public class NumberResult implements DiceResult {
 
     private final int value;
 
-    public FixedNumberResult(int value) {
+    public NumberResult(int value) {
         this.value = value;
     }
 

@@ -23,7 +23,6 @@ public class ExplodeModifier implements DiceRollModifier {
         this.explodeIf = explodeIf;
     }
 
-
     @Override
     public DiceRoll modifyRoll(DiceRoll roll, int min, int max) {
         DiceRoll total = roll;

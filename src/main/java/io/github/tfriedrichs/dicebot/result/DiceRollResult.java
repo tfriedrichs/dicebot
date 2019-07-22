@@ -21,7 +21,7 @@ public class DiceRollResult implements DiceResult {
     public EnumSet<MetaData> getMetaDataForRoll(int index) {
         return rolls.getMetaDataForRoll(index);
     }
-    
+
     @Override
     public String toString() {
         return this.value + Arrays.toString(getRolls());

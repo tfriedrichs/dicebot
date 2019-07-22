@@ -1,7 +1,7 @@
 package io.github.tfriedrichs.dicebot.expression;
 
 import io.github.tfriedrichs.dicebot.result.DiceResult;
-import io.github.tfriedrichs.dicebot.result.FixedNumberResult;
+import io.github.tfriedrichs.dicebot.result.NumberResult;
 
 public class NumberExpression implements DiceExpression {
 
@@ -13,6 +13,6 @@ public class NumberExpression implements DiceExpression {
 
     @Override
     public DiceResult roll() {
-        return new FixedNumberResult(value);
+        return new NumberResult(value);
     }
 }
