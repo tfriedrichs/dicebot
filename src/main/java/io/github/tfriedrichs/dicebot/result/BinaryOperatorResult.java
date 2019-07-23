@@ -1,16 +1,19 @@
 package io.github.tfriedrichs.dicebot.result;
 
-import java.util.function.IntBinaryOperator;
+import io.github.tfriedrichs.dicebot.operator.BinaryOperator;
+import io.github.tfriedrichs.dicebot.operator.RoundingStrategy;
 
 public class BinaryOperatorResult implements DiceResult {
 
-    private final Operator operator;
+    private final RoundingStrategy roundingStrategy;
+    private final BinaryOperator operator;
     private final DiceResult left;
     private final DiceResult right;
 
-    public BinaryOperatorResult(
-        Operator operator, DiceResult left,
+    public BinaryOperatorResult(RoundingStrategy roundingStrategy,
+        BinaryOperator operator, DiceResult left,
         DiceResult right) {
+        this.roundingStrategy = roundingStrategy;
         this.operator = operator;
         this.left = left;
         this.right = right;
@@ -18,10 +21,10 @@ public class BinaryOperatorResult implements DiceResult {
 
     @Override
     public int getValue() {
-        return operator.getOperator().applyAsInt(left.getValue(), right.getValue());
+        return operator.apply(roundingStrategy, left.getValue(), right.getValue());
     }
 
-    public Operator getOperator() {
+    public BinaryOperator getOperator() {
         return operator;
     }
 
@@ -33,25 +36,8 @@ public class BinaryOperatorResult implements DiceResult {
         return right;
     }
 
-    public enum Operator {
-        PLUS("+", (a, b) -> a + b),
-        MINUS("-", (a, b) -> a - b),
-        TIMES("*", (a, b) -> a * b);
-
-        private final String representation;
-        private final IntBinaryOperator operator;
-
-        Operator(String representation, IntBinaryOperator operator) {
-            this.representation = representation;
-            this.operator = operator;
-        }
-
-        public String getRepresentation() {
-            return representation;
-        }
-
-        public IntBinaryOperator getOperator() {
-            return operator;
-        }
+    @Override
+    public String toString() {
+        return operator + "(" + left + ", " + right + ")";
     }
 }
