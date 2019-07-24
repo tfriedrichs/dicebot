@@ -17,6 +17,11 @@ public class UnaryOperatorResult implements DiceResult {
         return operator.apply(inner.getValue());
     }
 
+    @Override
+    public <T> T accept(DiceResultVisitor<T> visitor) {
+        return visitor.visitUnaryOperator(this);
+    }
+
     public DiceResult getInner() {
         return inner;
     }
@@ -24,5 +29,14 @@ public class UnaryOperatorResult implements DiceResult {
     @Override
     public String toString() {
         return operator + "(" + inner + ")";
+    }
+
+    @Override
+    public int getPrecedence() {
+        return operator.getPrecedence();
+    }
+
+    public UnaryOperator getOperator() {
+        return this.operator;
     }
 }
