@@ -5,8 +5,8 @@ public enum BinaryOperator {
     MINUS("-", (r, x, y) -> x - y, 10, Type.INFIX),
     TIMES("*", (r, x, y) -> x * y, 20, Type.INFIX),
     DIVIDE("/", (r, x, y) -> r.apply((double) x / y), 20, Type.INFIX),
-    MAX("max", (r, x, y) -> Math.max(x, y), 0, Type.PREFIX),
-    MIN("min", (r, x, y) -> Math.min(x, y), 0, Type.PREFIX);
+    MAX("max", (r, x, y) -> Math.max(x, y), 100, Type.PREFIX),
+    MIN("min", (r, x, y) -> Math.min(x, y), 100, Type.PREFIX);
 
     private final String symbol;
     private final BinaryOperatorFunction function;
@@ -42,5 +42,4 @@ public enum BinaryOperator {
         PREFIX,
         INFIX
     }
-
 }

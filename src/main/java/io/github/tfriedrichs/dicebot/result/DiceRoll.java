@@ -74,7 +74,7 @@ public class DiceRoll {
 
     private static class DieMetaData {
 
-        private EnumSet<MetaData> metaData;
+        private final EnumSet<MetaData> metaData;
 
         DieMetaData() {
             metaData = EnumSet.noneOf(MetaData.class);

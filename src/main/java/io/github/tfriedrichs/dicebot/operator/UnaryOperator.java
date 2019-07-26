@@ -3,7 +3,7 @@ package io.github.tfriedrichs.dicebot.operator;
 import java.util.function.IntUnaryOperator;
 
 public enum UnaryOperator {
-    MINUS("-", a -> -a, 10);
+    MINUS("-", a -> -a, 30);
 
     private final String symbol;
     private final IntUnaryOperator function;

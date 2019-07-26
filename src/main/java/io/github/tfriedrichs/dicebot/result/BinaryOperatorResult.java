@@ -24,6 +24,16 @@ public class BinaryOperatorResult implements DiceResult {
         return operator.apply(roundingStrategy, left.getValue(), right.getValue());
     }
 
+    @Override
+    public <T> T accept(DiceResultVisitor<T> visitor) {
+        return visitor.visitBinaryOperator(this);
+    }
+
+    @Override
+    public int getPrecedence() {
+        return this.operator.getPrecedence();
+    }
+
     public BinaryOperator getOperator() {
         return operator;
     }
