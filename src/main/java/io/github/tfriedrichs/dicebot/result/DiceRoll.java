@@ -29,6 +29,14 @@ public class DiceRoll {
         this.metaData = metaData;
     }
 
+    public DiceRoll(DiceRoll roll) {
+        this.rolls = Arrays.copyOf(roll.getRolls(), roll.getRolls().length);
+        this.metaData = new DieMetaData[rolls.length];
+        for (int i = 0; i < metaData.length; i++) {
+            this.metaData[i] = new DieMetaData(roll.getMetaDataForRoll(i));
+        }
+    }
+
     public static DiceRoll concat(DiceRoll left, DiceRoll right) {
         int[] rolls = IntStream.concat(IntStream.of(left.rolls), IntStream.of(right.rolls))
             .toArray();
@@ -74,6 +82,10 @@ public class DiceRoll {
 
         public DieMetaData(MetaData metaData) {
             this.metaData = EnumSet.of(metaData);
+        }
+
+        public DieMetaData(EnumSet<MetaData> metaData) {
+            this.metaData = EnumSet.copyOf(metaData);
         }
 
         @Override

@@ -21,7 +21,8 @@ public class SuccessEvaluator implements DiceRollEvaluator {
         int result = 0;
         int[] rolls = roll.getRolls();
         for (int i = 0; i < rolls.length; i++) {
-            if (successIf.test(rolls[i])) {
+            if (!roll.getMetaDataForRoll(i).contains(MetaData.DROPPED)
+                && successIf.test(rolls[i])) {
                 roll.addMetaDataToRoll(i, MetaData.SUCCESS);
                 result++;
             }

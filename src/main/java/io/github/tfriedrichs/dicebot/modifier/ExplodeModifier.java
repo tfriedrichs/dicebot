@@ -35,7 +35,8 @@ public class ExplodeModifier implements DiceRollModifier {
             }
             int numberOfExplosions = 0;
             for (int i = 0; i < current.getRolls().length; i++) {
-                if (explodeIf.test(current.getRolls()[i])) {
+                if (!roll.getMetaDataForRoll(i).contains(MetaData.DROPPED)
+                    && explodeIf.test(current.getRolls()[i])) {
                     numberOfExplosions++;
                     current.addMetaDataToRoll(i, MetaData.EXPLODED);
                 }
