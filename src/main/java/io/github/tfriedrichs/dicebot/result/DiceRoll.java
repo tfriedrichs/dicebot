@@ -69,7 +69,7 @@ public class DiceRoll {
         REROLLED,
         SUCCESS,
         FAILURE,
-        FUMBLE
+        COMPOUNDED;
     }
 
     private static class DieMetaData {

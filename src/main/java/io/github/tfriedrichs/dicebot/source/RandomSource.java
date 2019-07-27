@@ -17,4 +17,15 @@ public interface RandomSource {
      */
     IntStream get(int number, int min, int max);
 
+    /**
+     * Gets a single random number between {@code min} (inclusive) and {@code max} (exclusive).
+     *
+     * @param min Minimum value for each element.
+     * @param max Maximum value for each element.
+     * @return a random number.
+     */
+    default int get(int min, int max) {
+        return get(1, min, max).limit(1).sum();
+    }
+
 }
