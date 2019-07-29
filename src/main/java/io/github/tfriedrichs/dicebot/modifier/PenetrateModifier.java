@@ -1,30 +1,26 @@
 package io.github.tfriedrichs.dicebot.modifier;
 
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
-import io.github.tfriedrichs.dicebot.source.RandomSource;
+import io.github.tfriedrichs.dicebot.source.Die;
 import io.github.tfriedrichs.dicebot.util.RecursionDepthException;
-
 import java.util.function.IntPredicate;
 
 public class PenetrateModifier implements DiceRollModifier {
 
     private static final int RECURSION_DEPTH = 1000;
 
-    private final RandomSource randomSource;
     private final IntPredicate penetrateIf;
 
-    public PenetrateModifier(RandomSource randomSource, int penetrateThreshold) {
-        this(randomSource, roll -> roll >= penetrateThreshold);
+    public PenetrateModifier(int penetrateThreshold) {
+        this(roll -> roll >= penetrateThreshold);
     }
 
-    public PenetrateModifier(RandomSource randomSource,
-                             IntPredicate penetrateIf) {
-        this.randomSource = randomSource;
+    public PenetrateModifier(IntPredicate penetrateIf) {
         this.penetrateIf = penetrateIf;
     }
 
     @Override
-    public DiceRoll modifyRoll(DiceRoll roll, int min, int max) {
+    public DiceRoll modifyRoll(DiceRoll roll, Die die) {
         DiceRoll total = roll;
         DiceRoll current = roll;
         int depth = 0;
@@ -45,7 +41,7 @@ public class PenetrateModifier implements DiceRollModifier {
                 break;
             }
             current = new DiceRoll(DiceRoll.MetaData.ADDED,
-                    randomSource.get(numberOfPenetrations, min, max).map(i -> i - 1).toArray());
+                die.roll(numberOfPenetrations).map(i -> i - 1).toArray());
             total = DiceRoll.concat(total, current);
         }
 

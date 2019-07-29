@@ -6,27 +6,23 @@ import io.github.tfriedrichs.dicebot.modifier.DiceRollModifier;
 import io.github.tfriedrichs.dicebot.result.DiceResult;
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
 import io.github.tfriedrichs.dicebot.result.DiceRollResult;
-import io.github.tfriedrichs.dicebot.source.RandomSource;
-import io.github.tfriedrichs.dicebot.source.ThreadLocalRandomSource;
+import io.github.tfriedrichs.dicebot.source.Die;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DiceRollExpression implements DiceExpression {
 
-    private final RandomSource randomSource;
     private final DiceExpression numberOfDice;
-    private final DiceExpression numberOfSides;
+    private final Die die;
     private final List<DiceRollModifier> modifiers;
     private final DiceRollEvaluator evaluator;
 
-    public DiceRollExpression(RandomSource randomSource,
-        DiceExpression numberOfDice,
-        DiceExpression numberOfSides,
+    public DiceRollExpression(DiceExpression numberOfDice,
+        Die die,
         List<DiceRollModifier> modifiers,
         DiceRollEvaluator evaluator) {
-        this.randomSource = randomSource;
         this.numberOfDice = numberOfDice;
-        this.numberOfSides = numberOfSides;
+        this.die = die;
         this.modifiers = modifiers;
         this.evaluator = evaluator;
     }
@@ -37,39 +33,24 @@ public class DiceRollExpression implements DiceExpression {
         if (numberOfDice < 0) {
             throw new IllegalArgumentException("Number of dice must not be negative");
         }
-        int numberOfSides = this.numberOfSides.roll().getValue();
-        if (numberOfSides < 0) {
-            throw new IllegalArgumentException("Number of sides must not be negative");
-        }
-        int[] rolls = randomSource.get(numberOfDice, 1,
-            numberOfSides + 1).toArray();
+        int[] rolls = die.roll(numberOfDice).toArray();
         DiceRoll result = new DiceRoll(rolls);
         for (DiceRollModifier modifier : modifiers) {
-            result = modifier.modifyRoll(result, 1, numberOfSides + 1);
+            result = modifier.modifyRoll(result, die);
         }
         return new DiceRollResult(evaluator.evaluate(result), result);
     }
 
     public static class Builder {
 
-        private RandomSource randomSource = new ThreadLocalRandomSource();
         private DiceExpression numberOfDice = new NumberExpression(1);
-        private DiceExpression numberOfSides = new NumberExpression(6);
+        private Die die = Die.D6;
         private final List<DiceRollModifier> modifiers = new ArrayList<>();
         private DiceRollEvaluator evaluator = new SumEvaluator();
 
-        public Builder withRandomSource(RandomSource randomSource) {
-            this.randomSource = randomSource;
-            return this;
-        }
 
         public Builder withNumberOfDice(DiceExpression numberOfDice) {
             this.numberOfDice = numberOfDice;
-            return this;
-        }
-
-        public Builder withNumberOfSides(DiceExpression numberOfSides) {
-            this.numberOfSides = numberOfSides;
             return this;
         }
 
@@ -78,8 +59,8 @@ public class DiceRollExpression implements DiceExpression {
             return this;
         }
 
-        public Builder withNumberOfSides(int numberOfSides) {
-            this.numberOfSides = new NumberExpression(numberOfSides);
+        public Builder withDie(Die die) {
+            this.die = die;
             return this;
         }
 
@@ -94,7 +75,7 @@ public class DiceRollExpression implements DiceExpression {
         }
 
         public DiceRollExpression build() {
-            return new DiceRollExpression(randomSource, numberOfDice, numberOfSides, modifiers,
+            return new DiceRollExpression(numberOfDice, die, modifiers,
                 evaluator);
         }
 

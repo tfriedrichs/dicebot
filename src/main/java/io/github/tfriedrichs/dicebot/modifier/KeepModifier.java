@@ -2,6 +2,7 @@ package io.github.tfriedrichs.dicebot.modifier;
 
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
 import io.github.tfriedrichs.dicebot.result.DiceRoll.MetaData;
+import io.github.tfriedrichs.dicebot.source.Die;
 import java.util.Comparator;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -21,7 +22,7 @@ public class KeepModifier implements DiceRollModifier {
     }
 
     @Override
-    public DiceRoll modifyRoll(DiceRoll roll, int min, int max) {
+    public DiceRoll modifyRoll(DiceRoll roll, Die die) {
         DiceRoll result = new DiceRoll(roll);
         Stream<Integer> indices = IntStream.range(0, result.getRolls().length).boxed();
         if (direction == Direction.HIGH) {

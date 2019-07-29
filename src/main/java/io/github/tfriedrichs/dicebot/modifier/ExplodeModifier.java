@@ -2,7 +2,7 @@ package io.github.tfriedrichs.dicebot.modifier;
 
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
 import io.github.tfriedrichs.dicebot.result.DiceRoll.MetaData;
-import io.github.tfriedrichs.dicebot.source.RandomSource;
+import io.github.tfriedrichs.dicebot.source.Die;
 import io.github.tfriedrichs.dicebot.util.RecursionDepthException;
 import java.util.function.IntPredicate;
 
@@ -10,21 +10,18 @@ public class ExplodeModifier implements DiceRollModifier {
 
     private static final int RECURSION_DEPTH = 1000;
 
-    private final RandomSource randomSource;
     private final IntPredicate explodeIf;
 
-    public ExplodeModifier(RandomSource randomSource, int explodeThreshold) {
-        this(randomSource, roll -> roll >= explodeThreshold);
+    public ExplodeModifier(int explodeThreshold) {
+        this(roll -> roll >= explodeThreshold);
     }
 
-    public ExplodeModifier(RandomSource randomSource,
-        IntPredicate explodeIf) {
-        this.randomSource = randomSource;
+    public ExplodeModifier(IntPredicate explodeIf) {
         this.explodeIf = explodeIf;
     }
 
     @Override
-    public DiceRoll modifyRoll(DiceRoll roll, int min, int max) {
+    public DiceRoll modifyRoll(DiceRoll roll, Die die) {
         DiceRoll total = roll;
         DiceRoll current = roll;
         int depth = 0;
@@ -45,7 +42,7 @@ public class ExplodeModifier implements DiceRollModifier {
                 break;
             }
             current = new DiceRoll(MetaData.ADDED,
-                randomSource.get(numberOfExplosions, min, max).toArray());
+                die.roll(numberOfExplosions).toArray());
             total = DiceRoll.concat(total, current);
         }
 

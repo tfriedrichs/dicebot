@@ -1,9 +1,8 @@
 package io.github.tfriedrichs.dicebot.modifier;
 
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
-import io.github.tfriedrichs.dicebot.source.RandomSource;
+import io.github.tfriedrichs.dicebot.source.Die;
 import io.github.tfriedrichs.dicebot.util.RecursionDepthException;
-
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.IntPredicate;
@@ -14,21 +13,18 @@ public class CompoundModifier implements DiceRollModifier {
 
     private static final int RECURSION_DEPTH = 1000;
 
-    private final RandomSource randomSource;
     private final IntPredicate compoundIf;
 
-    public CompoundModifier(RandomSource randomSource, int compoundThreshold) {
-        this(randomSource, roll -> roll >= compoundThreshold);
+    public CompoundModifier(int compoundThreshold) {
+        this(roll -> roll >= compoundThreshold);
     }
 
-    public CompoundModifier(RandomSource randomSource,
-                            IntPredicate compoundIf) {
-        this.randomSource = randomSource;
+    public CompoundModifier(IntPredicate compoundIf) {
         this.compoundIf = compoundIf;
     }
 
     @Override
-    public DiceRoll modifyRoll(DiceRoll roll, int min, int max) {
+    public DiceRoll modifyRoll(DiceRoll roll, Die die) {
         DiceRoll total = new DiceRoll(roll);
         Set<Integer> compoundingIndices = IntStream.range(0, roll.getRolls().length)
                 .filter(index -> compoundIf.test(roll.getRolls()[index]))
@@ -42,7 +38,7 @@ public class CompoundModifier implements DiceRollModifier {
             }
             for (Iterator<Integer> iterator = compoundingIndices.iterator(); iterator.hasNext(); ) {
                 Integer compoundingIndex = iterator.next();
-                int newRoll = randomSource.get(min, max);
+                int newRoll = die.roll();
                 total.getRolls()[compoundingIndex] += newRoll;
                 if (!compoundIf.test(newRoll)) {
                     total.addMetaDataToRoll(compoundingIndex, DiceRoll.MetaData.COMPOUNDED);

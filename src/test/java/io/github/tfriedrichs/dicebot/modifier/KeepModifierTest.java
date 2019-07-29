@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import io.github.tfriedrichs.dicebot.modifier.KeepModifier.Direction;
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
 import io.github.tfriedrichs.dicebot.result.DiceRoll.MetaData;
+import io.github.tfriedrichs.dicebot.source.Die;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,7 @@ class KeepModifierTest {
     void shouldKeepAllDiceIfNumberTooKeepIsHigherThanTotalDice() {
         DiceRoll rolls = new DiceRoll(5, 1, 6);
         KeepModifier modifier = new KeepModifier(Direction.HIGH, 6);
-        DiceRoll modified = modifier.modifyRoll(rolls, 0, 6);
+        DiceRoll modified = modifier.modifyRoll(rolls, Die.D6);
         assertTrue(IntStream.range(0, modified.getRolls().length)
             .mapToObj(modified::getMetaDataForRoll)
             .noneMatch(metaData -> metaData.contains(MetaData.DROPPED)));
@@ -27,7 +28,7 @@ class KeepModifierTest {
     void shouldKeepNoDiceIfNumberToKeepIsZero() {
         DiceRoll rolls = new DiceRoll(5, 1, 6);
         KeepModifier modifier = new KeepModifier(Direction.HIGH, 0);
-        DiceRoll modified = modifier.modifyRoll(rolls, 0, 6);
+        DiceRoll modified = modifier.modifyRoll(rolls, Die.D6);
         assertTrue(IntStream.range(0, modified.getRolls().length)
             .mapToObj(modified::getMetaDataForRoll)
             .allMatch(metaData -> metaData.contains(MetaData.DROPPED)));
@@ -44,7 +45,7 @@ class KeepModifierTest {
     void shouldKeepHigherDiceIfDirectionHigh() {
         DiceRoll rolls = new DiceRoll(5, 1, 6);
         KeepModifier modifier = new KeepModifier(Direction.HIGH, 2);
-        DiceRoll modified = modifier.modifyRoll(rolls, 0, 6);
+        DiceRoll modified = modifier.modifyRoll(rolls, Die.D6);
         assertArrayEquals(rolls.getRolls(), modified.getRolls());
         assertFalse(modified.getMetaDataForRoll(0).contains(MetaData.DROPPED));
         assertTrue(modified.getMetaDataForRoll(1).contains(MetaData.DROPPED));
@@ -55,7 +56,7 @@ class KeepModifierTest {
     void shouldKeepLowerDiceIfDirectionLow() {
         DiceRoll rolls = new DiceRoll(5, 1, 6);
         KeepModifier modifier = new KeepModifier(Direction.LOW, 2);
-        DiceRoll modified = modifier.modifyRoll(rolls, 0, 6);
+        DiceRoll modified = modifier.modifyRoll(rolls, Die.D6);
         assertArrayEquals(rolls.getRolls(), modified.getRolls());
         assertFalse(modified.getMetaDataForRoll(0).contains(MetaData.DROPPED));
         assertFalse(modified.getMetaDataForRoll(1).contains(MetaData.DROPPED));
