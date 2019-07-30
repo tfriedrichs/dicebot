@@ -36,6 +36,9 @@ public class Die {
     }
 
     public Die(RandomSource randomSource, int numberOfSides) {
+        if (numberOfSides < 1) {
+            throw new IllegalArgumentException("Number of sides must be positive.");
+        }
         this.min = 1;
         this.max = numberOfSides;
         this.randomSource = randomSource;

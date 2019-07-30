@@ -68,8 +68,10 @@ public class DiceRoll {
         EXPLODED,
         REROLLED,
         SUCCESS,
+        CRITICAL_SUCCESS,
+        CRITICAL_FAILURE,
         FAILURE,
-        COMPOUNDED;
+        COMPOUNDED
     }
 
     private static class DieMetaData {
