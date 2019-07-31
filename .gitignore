@@ -214,3 +214,5 @@ xtend-gen/
 /example/.idea/misc.xml
 /example/.idea/vcs.xml
 /example/example.iml
+
+/build/*

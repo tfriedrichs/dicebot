@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'antlr'
 }
 
 group 'io.github.tfriedrichs'
@@ -15,8 +16,14 @@ dependencies {
     testCompile("org.mockito:mockito-core:2.+")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.0")
+    antlr "org.antlr:antlr4:4.7.2"
 }
 
 test {
     useJUnitPlatform()
 }
+
+generateGrammarSource {
+    arguments += ["-visitor", "-no-listener"]
+}
+
