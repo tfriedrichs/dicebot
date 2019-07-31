@@ -1,9 +1,9 @@
 package io.github.tfriedrichs.dicebot.expression;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import io.github.tfriedrichs.dicebot.operator.UnaryOperator;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class UnaryOperatorExpressionTest {
 

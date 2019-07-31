@@ -1,21 +1,20 @@
 package io.github.tfriedrichs.dicebot.modifier;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
+import io.github.tfriedrichs.dicebot.selector.DirectionSelector;
 import io.github.tfriedrichs.dicebot.source.Die;
-import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
+
+import java.util.stream.IntStream;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class DropModifierTest {
 
     @Test
     void shouldDropAllDiceIfNumberTooDropIsHigherThanTotalDice() {
         DiceRoll rolls = new DiceRoll(5, 1, 6);
-        DropModifier modifier = new DropModifier(DropModifier.Direction.HIGH, 6);
+        DropModifier modifier = new DropModifier(new DirectionSelector(DirectionSelector.Direction.HIGH, 6));
         DiceRoll modified = modifier.modifyRoll(rolls, Die.D6);
         assertTrue(IntStream.range(0, modified.getRolls().length)
                 .mapToObj(modified::getMetaDataForRoll)
@@ -25,7 +24,7 @@ class DropModifierTest {
     @Test
     void shouldDropNoDiceIfNumberToDropIsZero() {
         DiceRoll rolls = new DiceRoll(5, 1, 6);
-        DropModifier modifier = new DropModifier(DropModifier.Direction.HIGH, 0);
+        DropModifier modifier = new DropModifier(new DirectionSelector(DirectionSelector.Direction.HIGH, 0));
         DiceRoll modified = modifier.modifyRoll(rolls, Die.D6);
         assertTrue(IntStream.range(0, modified.getRolls().length)
                 .mapToObj(modified::getMetaDataForRoll)
@@ -36,13 +35,13 @@ class DropModifierTest {
     void shouldThrowForNegativeNumberOfDiceToDrop() {
         DiceRoll rolls = new DiceRoll(5, 1, 6);
         assertThrows(IllegalArgumentException.class,
-                () -> new DropModifier(DropModifier.Direction.HIGH, -2));
+                () -> new DropModifier(new DirectionSelector(DirectionSelector.Direction.HIGH, -2)));
     }
 
     @Test
     void shouldDropHigherDiceIfDirectionHigh() {
         DiceRoll rolls = new DiceRoll(5, 1, 6);
-        DropModifier modifier = new DropModifier(DropModifier.Direction.HIGH, 2);
+        DropModifier modifier = new DropModifier(new DirectionSelector(DirectionSelector.Direction.HIGH, 2));
         DiceRoll modified = modifier.modifyRoll(rolls, Die.D6);
         assertArrayEquals(rolls.getRolls(), modified.getRolls());
         assertTrue(modified.getMetaDataForRoll(0).contains(DiceRoll.MetaData.DROPPED));
@@ -53,7 +52,7 @@ class DropModifierTest {
     @Test
     void shouldKeepLowerDiceIfDirectionLow() {
         DiceRoll rolls = new DiceRoll(5, 1, 6);
-        DropModifier modifier = new DropModifier(DropModifier.Direction.LOW, 2);
+        DropModifier modifier = new DropModifier(new DirectionSelector(DirectionSelector.Direction.LOW, 2));
         DiceRoll modified = modifier.modifyRoll(rolls, Die.D6);
         assertArrayEquals(rolls.getRolls(), modified.getRolls());
         assertTrue(modified.getMetaDataForRoll(0).contains(DiceRoll.MetaData.DROPPED));

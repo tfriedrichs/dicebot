@@ -1,10 +1,10 @@
 package io.github.tfriedrichs.dicebot.expression;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import io.github.tfriedrichs.dicebot.operator.BinaryOperator;
 import io.github.tfriedrichs.dicebot.operator.RoundingStrategy;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BinaryOperatorExpressionTest {
 

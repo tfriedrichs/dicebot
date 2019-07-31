@@ -7,6 +7,7 @@ import io.github.tfriedrichs.dicebot.result.DiceResult;
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
 import io.github.tfriedrichs.dicebot.result.DiceRollResult;
 import io.github.tfriedrichs.dicebot.source.Die;
+
 import java.util.ArrayList;
 import java.util.List;
 

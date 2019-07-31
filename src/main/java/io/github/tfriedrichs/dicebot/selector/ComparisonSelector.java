@@ -1,6 +1,7 @@
 package io.github.tfriedrichs.dicebot.selector;
 
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
+
 import java.util.function.BiPredicate;
 import java.util.stream.IntStream;
 
@@ -19,6 +20,10 @@ public class ComparisonSelector implements DiceSelector {
     public IntStream select(DiceRoll roll) {
         return IntStream.range(0, roll.getRolls().length)
             .filter(index -> mode.test(roll.getRolls()[index], comparisonPoint));
+    }
+
+    public boolean test(int value) {
+        return mode.test(value, comparisonPoint);
     }
 
     public enum Mode {

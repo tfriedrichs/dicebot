@@ -1,48 +1,38 @@
 package io.github.tfriedrichs.dicebot.modifier;
 
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
+import io.github.tfriedrichs.dicebot.selector.ComparisonSelector;
 import io.github.tfriedrichs.dicebot.source.Die;
-import io.github.tfriedrichs.dicebot.util.RecursionDepthException;
-import java.util.function.IntPredicate;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class PenetrateModifier implements DiceRollModifier {
 
-    private static final int RECURSION_DEPTH = 1000;
+    private final int maxDepth;
+    private final ComparisonSelector selector;
 
-    private final IntPredicate penetrateIf;
-
-    public PenetrateModifier(int penetrateThreshold) {
-        this(roll -> roll >= penetrateThreshold);
-    }
-
-    public PenetrateModifier(IntPredicate penetrateIf) {
-        this.penetrateIf = penetrateIf;
+    public PenetrateModifier(int maxDepth, ComparisonSelector selector) {
+        this.maxDepth = maxDepth;
+        this.selector = selector;
     }
 
     @Override
     public DiceRoll modifyRoll(DiceRoll roll, Die die) {
         DiceRoll total = roll;
-        DiceRoll current = roll;
+        DiceRoll current = new DiceRoll(roll);
         int depth = 0;
-        while (true) {
+        int previousLength = 0;
+        while (depth < maxDepth) {
             depth++;
-            if (depth > RECURSION_DEPTH) {
-                throw new RecursionDepthException("Penetrate recursion depth reached.");
-            }
-            int numberOfPenetrations = 0;
-            for (int i = 0; i < current.getRolls().length; i++) {
-                if (!roll.getMetaDataForRoll(i).contains(DiceRoll.MetaData.DROPPED)
-                        && penetrateIf.test(current.getRolls()[i])) {
-                    numberOfPenetrations++;
-                    current.addMetaDataToRoll(i, DiceRoll.MetaData.EXPLODED);
-                }
-            }
-            if (numberOfPenetrations == 0) {
-                break;
-            }
+            Set<Integer> explode = selector.select(current).boxed().collect(Collectors.toSet());
             current = new DiceRoll(DiceRoll.MetaData.ADDED,
-                die.roll(numberOfPenetrations).map(i -> i - 1).toArray());
+                    die.roll(explode.size()).map(i -> i - 1).toArray());
             total = DiceRoll.concat(total, current);
+            for (Integer index : explode) {
+                total.addMetaDataToRoll(index + previousLength, DiceRoll.MetaData.EXPLODED);
+            }
+            previousLength = total.getRolls().length;
         }
 
         return total;

@@ -1,24 +1,24 @@
 package io.github.tfriedrichs.dicebot.modifier;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
+import io.github.tfriedrichs.dicebot.selector.ComparisonSelector;
 import io.github.tfriedrichs.dicebot.source.Die;
 import io.github.tfriedrichs.dicebot.source.FixedRandomSource;
 import io.github.tfriedrichs.dicebot.source.RandomSource;
-import io.github.tfriedrichs.dicebot.util.RecursionDepthException;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class CompoundModifierTest {
+
+    private static final int MAX_DEPTH = 100;
 
     @Test
     void shouldReturnIdentityIfNoCompounds() {
         RandomSource randomSource = new FixedRandomSource(1, 2, 3);
         DiceRoll rolls = new DiceRoll(2, 3, 4, 4, 1, 4);
-        DiceRollModifier modifier = new CompoundModifier(5);
+        DiceRollModifier modifier = new CompoundModifier(MAX_DEPTH, new ComparisonSelector(ComparisonSelector.Mode.GREATER_EQUALS, 5));
         DiceRoll modified = modifier.modifyRoll(rolls, new Die(randomSource, 6));
         assertArrayEquals(rolls.getRolls(), modified.getRolls());
         assertEquals(0, modified.countMetadata(DiceRoll.MetaData.EXPLODED));
@@ -29,7 +29,7 @@ class CompoundModifierTest {
     void shouldCompoundOnceIfNoFurtherCompounds() {
         RandomSource randomSource = new FixedRandomSource(1, 2, 3);
         DiceRoll rolls = new DiceRoll(5, 1, 6);
-        DiceRollModifier modifier = new CompoundModifier(5);
+        DiceRollModifier modifier = new CompoundModifier(MAX_DEPTH, new ComparisonSelector(ComparisonSelector.Mode.GREATER_EQUALS, 5));
         DiceRoll modified = modifier.modifyRoll(rolls, new Die(randomSource, 6));
         assertArrayEquals(new int[]{6, 1, 8}, modified.getRolls());
         assertEquals(2, modified.countMetadata(DiceRoll.MetaData.COMPOUNDED));
@@ -39,20 +39,18 @@ class CompoundModifierTest {
     void shouldCompoundMultipleTimesIfFurtherCompounds() {
         RandomSource randomSource = new FixedRandomSource(5, 5, 3, 3, 3);
         DiceRoll rolls = new DiceRoll(5, 1, 6);
-        DiceRollModifier modifier = new CompoundModifier(5);
+        DiceRollModifier modifier = new CompoundModifier(MAX_DEPTH, new ComparisonSelector(ComparisonSelector.Mode.GREATER_EQUALS, 5));
         DiceRoll modified = modifier.modifyRoll(rolls, new Die(randomSource, 6));
         assertArrayEquals(new int[]{13, 1, 14}, modified.getRolls());
         assertEquals(2, modified.countMetadata(DiceRoll.MetaData.COMPOUNDED));
     }
 
     @Test
-    @Tag("RecursionDepth")
-    void shouldThrowForInfiniteRecursion() {
-        RandomSource randomSource = new FixedRandomSource(6);
-        DiceRoll rolls = new DiceRoll(5, 1, 6);
-        DiceRollModifier modifier = new CompoundModifier(5);
-        assertThrows(RecursionDepthException.class,
-            () -> modifier.modifyRoll(rolls, new Die(randomSource, 6)));
+    void shouldCompoundUntilMaxDepth() {
+        RandomSource randomSource = new FixedRandomSource(1);
+        DiceRoll rolls = new DiceRoll(1);
+        DiceRollModifier modifier = new CompoundModifier(100, new ComparisonSelector(ComparisonSelector.Mode.EQUALS, 1));
+        assertArrayEquals(new int[]{101}, modifier.modifyRoll(rolls, new Die(randomSource, 1)).getRolls());
     }
 
 }

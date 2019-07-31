@@ -1,10 +1,10 @@
 package io.github.tfriedrichs.dicebot.selector;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
 import io.github.tfriedrichs.dicebot.selector.ComparisonSelector.Mode;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 class ComparisonSelectorTest {
 
@@ -41,6 +41,13 @@ class ComparisonSelectorTest {
         DiceRoll roll = new DiceRoll(2, 5, 1, 1, 3, 4, 6);
         ComparisonSelector selector = new ComparisonSelector(Mode.GREATER_EQUALS, 3);
         assertArrayEquals(new int[]{1, 4, 5, 6}, selector.select(roll).toArray());
+    }
+
+    @Test
+    void isInvertible() {
+        DiceRoll roll = new DiceRoll(2, 5, 1, 1, 3, 4, 6);
+        DiceSelector selector = new ComparisonSelector(Mode.GREATER_EQUALS, 3).inverse();
+        assertArrayEquals(new int[]{0, 2, 3}, selector.select(roll).toArray());
     }
 
 

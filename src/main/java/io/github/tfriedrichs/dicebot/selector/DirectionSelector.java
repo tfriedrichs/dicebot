@@ -1,6 +1,7 @@
 package io.github.tfriedrichs.dicebot.selector;
 
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
+
 import java.util.Comparator;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
