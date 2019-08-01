@@ -6,6 +6,6 @@ import io.github.tfriedrichs.dicebot.selector.DiceSelector;
 public class KeepModifier extends DiceAnnotator {
 
     public KeepModifier(DiceSelector selector) {
-        super(Mode.USE_DROPPED, MetaData.DROPPED, selector.inverse());
+        super(Mode.SKIP_DROPPED, MetaData.DROPPED, selector.inverse());
     }
 }
