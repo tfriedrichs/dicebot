@@ -9,7 +9,7 @@ import io.github.tfriedrichs.dicebot.source.FixedRandomSource;
 import io.github.tfriedrichs.dicebot.source.RandomSource;
 import org.junit.jupiter.api.Test;
 
-public class AcceptanceTest {
+class AcceptanceTest {
 
     @Test
     void pathfinderExample() {
