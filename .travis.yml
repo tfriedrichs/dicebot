@@ -3,8 +3,6 @@ language: java
 before_install:
  - chmod +x gradlew
 
-install: gradle wrapper --gradle-version 4.2
-
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
