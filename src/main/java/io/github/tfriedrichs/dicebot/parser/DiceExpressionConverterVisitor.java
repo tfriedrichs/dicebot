@@ -20,6 +20,7 @@ import io.github.tfriedrichs.dicebot.operator.RoundingStrategy;
 import io.github.tfriedrichs.dicebot.operator.UnaryOperator;
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
 import io.github.tfriedrichs.dicebot.selector.ComparisonSelector;
+import io.github.tfriedrichs.dicebot.selector.ComparisonSelector.Mode;
 import io.github.tfriedrichs.dicebot.selector.DiceSelector.DropMode;
 import io.github.tfriedrichs.dicebot.selector.DirectionSelector;
 import io.github.tfriedrichs.dicebot.source.Die;
@@ -138,11 +139,15 @@ public class DiceExpressionConverterVisitor extends DiceExpressionBaseVisitor<Di
                 )));
         }
         if (modifier instanceof DiceExpressionParser.SuccessModifierContext) {
-            builder.withModifier(new SuccessModifier(getSelector(((DiceExpressionParser.SuccessModifierContext) modifier).comparisonSelector())));
+            builder.withModifier(new SuccessModifier(getSelector(
+                ((DiceExpressionParser.SuccessModifierContext) modifier).comparisonSelector(),
+                Mode.GREATER_EQUALS)));
             builder.withEvaluator(new SuccessEvaluator());
         }
         if (modifier instanceof DiceExpressionParser.FailureModifierContext) {
-            builder.withModifier(new FailureModifier(getSelector(((DiceExpressionParser.FailureModifierContext) modifier).comparisonSelector())));
+            builder.withModifier(new FailureModifier(getSelector(
+                ((DiceExpressionParser.FailureModifierContext) modifier).comparisonSelector(),
+                Mode.LESSER_EQUALS)));
             builder.withEvaluator(new SuccessFailureEvaluator());
         }
         if (modifier instanceof DiceExpressionParser.ExplodeModifierContext) {
@@ -151,7 +156,8 @@ public class DiceExpressionConverterVisitor extends DiceExpressionBaseVisitor<Di
                     == null ? new ComparisonSelector(ComparisonSelector.Mode.EQUALS,
                     DropMode.SKIP, die.getMax()
                 ) :
-                    getSelector(((DiceExpressionParser.ExplodeModifierContext) modifier).comparisonSelector());
+                    getSelector(((DiceExpressionParser.ExplodeModifierContext) modifier)
+                        .comparisonSelector(), Mode.GREATER_EQUALS);
             builder.withModifier(new ExplodeModifier(MAX_DEPTH, selector));
         }
         if (modifier instanceof DiceExpressionParser.CompoundModifierContext) {
@@ -160,7 +166,8 @@ public class DiceExpressionConverterVisitor extends DiceExpressionBaseVisitor<Di
                     == null ? new ComparisonSelector(ComparisonSelector.Mode.EQUALS,
                     DropMode.SKIP, die.getMax()
                 ) :
-                    getSelector(((DiceExpressionParser.CompoundModifierContext) modifier).comparisonSelector());
+                    getSelector(((DiceExpressionParser.CompoundModifierContext) modifier)
+                        .comparisonSelector(), Mode.GREATER_EQUALS);
             builder.withModifier(new CompoundModifier(MAX_DEPTH, selector));
         }
         if (modifier instanceof DiceExpressionParser.PenetrateModifierContext) {
@@ -169,25 +176,28 @@ public class DiceExpressionConverterVisitor extends DiceExpressionBaseVisitor<Di
                     == null ? new ComparisonSelector(ComparisonSelector.Mode.EQUALS,
                     DropMode.SKIP, die.getMax()
                 ) :
-                    getSelector(((DiceExpressionParser.PenetrateModifierContext) modifier).comparisonSelector());
+                    getSelector(((DiceExpressionParser.PenetrateModifierContext) modifier)
+                        .comparisonSelector(), Mode.GREATER_EQUALS);
             builder.withModifier(new PenetrateModifier(MAX_DEPTH, selector));
         }
         if (modifier instanceof DiceExpressionParser.CriticalSuccessModifierContext) {
             builder.withModifier(new DiceAnnotator(DiceRoll.MetaData.CRITICAL_SUCCESS, getSelector(
                 ((DiceExpressionParser.CriticalSuccessModifierContext) modifier)
-                    .comparisonSelector())));
+                    .comparisonSelector(), Mode.GREATER_EQUALS)));
         }
         if (modifier instanceof DiceExpressionParser.CriticalFailureModifierContext) {
             builder.withModifier(new DiceAnnotator(DiceRoll.MetaData.CRITICAL_FAILURE, getSelector(
                 ((DiceExpressionParser.CriticalFailureModifierContext) modifier)
-                    .comparisonSelector())));
+                    .comparisonSelector(), Mode.LESSER_EQUALS)));
         }
 
     }
 
-    private ComparisonSelector getSelector(DiceExpressionParser.ComparisonSelectorContext comparisonSelector) {
+    private ComparisonSelector getSelector(
+        DiceExpressionParser.ComparisonSelectorContext comparisonSelector,
+        ComparisonSelector.Mode defaultMode) {
         ComparisonSelector.Mode mode =
-                comparisonSelector.op == null ? ComparisonSelector.Mode.EQUALS :
+            comparisonSelector.op == null ? defaultMode :
                         comparisonSelector.op.getType() == DiceExpressionParser.LESSER ? ComparisonSelector.Mode.LESSER :
                                 comparisonSelector.op.getType() == DiceExpressionParser.LESSER_EQUALS ? ComparisonSelector.Mode.LESSER_EQUALS :
                                         comparisonSelector.op.getType() == DiceExpressionParser.EQUALS ? ComparisonSelector.Mode.EQUALS :
