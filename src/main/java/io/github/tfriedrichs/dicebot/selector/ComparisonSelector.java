@@ -1,24 +1,31 @@
 package io.github.tfriedrichs.dicebot.selector;
 
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
-
+import io.github.tfriedrichs.dicebot.result.DiceRoll.MetaData;
 import java.util.function.BiPredicate;
 import java.util.stream.IntStream;
 
 public class ComparisonSelector implements DiceSelector {
 
+    private final DropMode dropMode;
     private final Mode mode;
     private final int comparisonPoint;
 
     public ComparisonSelector(Mode mode,
-        int comparisonPoint) {
+        DropMode dropMode, int comparisonPoint) {
         this.mode = mode;
         this.comparisonPoint = comparisonPoint;
+        this.dropMode = dropMode;
     }
 
     @Override
     public IntStream select(DiceRoll roll) {
-        return IntStream.range(0, roll.getRolls().length)
+        IntStream indices = IntStream.range(0, roll.getRolls().length);
+        if (dropMode == DropMode.SKIP) {
+            indices = indices
+                .filter(index -> !roll.getMetaDataForRoll(index).contains(MetaData.DROPPED));
+        }
+        return indices
             .filter(index -> mode.test(roll.getRolls()[index], comparisonPoint));
     }
 

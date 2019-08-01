@@ -2,19 +2,30 @@ package io.github.tfriedrichs.dicebot.parser;
 
 import io.github.tfriedrichs.dicebot.evaluator.SuccessEvaluator;
 import io.github.tfriedrichs.dicebot.evaluator.SuccessFailureEvaluator;
-import io.github.tfriedrichs.dicebot.expression.*;
-import io.github.tfriedrichs.dicebot.modifier.*;
+import io.github.tfriedrichs.dicebot.expression.BinaryOperatorExpression;
+import io.github.tfriedrichs.dicebot.expression.DiceExpression;
+import io.github.tfriedrichs.dicebot.expression.DiceRollExpression;
+import io.github.tfriedrichs.dicebot.expression.NumberExpression;
+import io.github.tfriedrichs.dicebot.expression.UnaryOperatorExpression;
+import io.github.tfriedrichs.dicebot.modifier.CompoundModifier;
+import io.github.tfriedrichs.dicebot.modifier.DiceAnnotator;
+import io.github.tfriedrichs.dicebot.modifier.DropModifier;
+import io.github.tfriedrichs.dicebot.modifier.ExplodeModifier;
+import io.github.tfriedrichs.dicebot.modifier.FailureModifier;
+import io.github.tfriedrichs.dicebot.modifier.KeepModifier;
+import io.github.tfriedrichs.dicebot.modifier.PenetrateModifier;
+import io.github.tfriedrichs.dicebot.modifier.SuccessModifier;
 import io.github.tfriedrichs.dicebot.operator.BinaryOperator;
 import io.github.tfriedrichs.dicebot.operator.RoundingStrategy;
 import io.github.tfriedrichs.dicebot.operator.UnaryOperator;
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
 import io.github.tfriedrichs.dicebot.selector.ComparisonSelector;
+import io.github.tfriedrichs.dicebot.selector.DiceSelector.DropMode;
 import io.github.tfriedrichs.dicebot.selector.DirectionSelector;
 import io.github.tfriedrichs.dicebot.source.Die;
 import io.github.tfriedrichs.dicebot.source.RandomSource;
-import org.antlr.v4.runtime.tree.TerminalNode;
-
 import java.util.List;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class DiceExpressionConverterVisitor extends DiceExpressionBaseVisitor<DiceExpression> {
 
@@ -113,10 +124,18 @@ public class DiceExpressionConverterVisitor extends DiceExpressionBaseVisitor<Di
             builder.withModifier(new KeepModifier(getSelector(((DiceExpressionParser.KeepModifierContext) modifier).directionSelector())));
         }
         if (modifier instanceof DiceExpressionParser.DropHighModifierContext) {
-            builder.withModifier(new DropModifier(new DirectionSelector(DirectionSelector.Direction.HIGH, getNumber(((DiceExpressionParser.DropHighModifierContext) modifier).NUMBER()))));
+            builder.withModifier(
+                new DropModifier(new DirectionSelector(DirectionSelector.Direction.HIGH,
+                    DropMode.SKIP,
+                    getNumber(((DiceExpressionParser.DropHighModifierContext) modifier).NUMBER())
+                )));
         }
         if (modifier instanceof DiceExpressionParser.DropLowModifierContext) {
-            builder.withModifier(new DropModifier(new DirectionSelector(DirectionSelector.Direction.LOW, getNumber(((DiceExpressionParser.DropLowModifierContext) modifier).NUMBER()))));
+            builder.withModifier(
+                new DropModifier(new DirectionSelector(DirectionSelector.Direction.LOW,
+                    DropMode.SKIP,
+                    getNumber(((DiceExpressionParser.DropLowModifierContext) modifier).NUMBER())
+                )));
         }
         if (modifier instanceof DiceExpressionParser.SuccessModifierContext) {
             builder.withModifier(new SuccessModifier(getSelector(((DiceExpressionParser.SuccessModifierContext) modifier).comparisonSelector())));
@@ -127,25 +146,41 @@ public class DiceExpressionConverterVisitor extends DiceExpressionBaseVisitor<Di
             builder.withEvaluator(new SuccessFailureEvaluator());
         }
         if (modifier instanceof DiceExpressionParser.ExplodeModifierContext) {
-            ComparisonSelector selector = ((DiceExpressionParser.ExplodeModifierContext) modifier).comparisonSelector() == null ? new ComparisonSelector(ComparisonSelector.Mode.EQUALS, die.getMax()) :
+            ComparisonSelector selector =
+                ((DiceExpressionParser.ExplodeModifierContext) modifier).comparisonSelector()
+                    == null ? new ComparisonSelector(ComparisonSelector.Mode.EQUALS,
+                    DropMode.SKIP, die.getMax()
+                ) :
                     getSelector(((DiceExpressionParser.ExplodeModifierContext) modifier).comparisonSelector());
             builder.withModifier(new ExplodeModifier(MAX_DEPTH, selector));
         }
         if (modifier instanceof DiceExpressionParser.CompoundModifierContext) {
-            ComparisonSelector selector = ((DiceExpressionParser.CompoundModifierContext) modifier).comparisonSelector() == null ? new ComparisonSelector(ComparisonSelector.Mode.EQUALS, die.getMax()) :
+            ComparisonSelector selector =
+                ((DiceExpressionParser.CompoundModifierContext) modifier).comparisonSelector()
+                    == null ? new ComparisonSelector(ComparisonSelector.Mode.EQUALS,
+                    DropMode.SKIP, die.getMax()
+                ) :
                     getSelector(((DiceExpressionParser.CompoundModifierContext) modifier).comparisonSelector());
             builder.withModifier(new CompoundModifier(MAX_DEPTH, selector));
         }
         if (modifier instanceof DiceExpressionParser.PenetrateModifierContext) {
-            ComparisonSelector selector = ((DiceExpressionParser.PenetrateModifierContext) modifier).comparisonSelector() == null ? new ComparisonSelector(ComparisonSelector.Mode.EQUALS, die.getMax()) :
+            ComparisonSelector selector =
+                ((DiceExpressionParser.PenetrateModifierContext) modifier).comparisonSelector()
+                    == null ? new ComparisonSelector(ComparisonSelector.Mode.EQUALS,
+                    DropMode.SKIP, die.getMax()
+                ) :
                     getSelector(((DiceExpressionParser.PenetrateModifierContext) modifier).comparisonSelector());
             builder.withModifier(new PenetrateModifier(MAX_DEPTH, selector));
         }
         if (modifier instanceof DiceExpressionParser.CriticalSuccessModifierContext) {
-            builder.withModifier(new DiceAnnotator(DiceAnnotator.Mode.USE_DROPPED, DiceRoll.MetaData.CRITICAL_SUCCESS, getSelector(((DiceExpressionParser.CriticalSuccessModifierContext) modifier).comparisonSelector())));
+            builder.withModifier(new DiceAnnotator(DiceRoll.MetaData.CRITICAL_SUCCESS, getSelector(
+                ((DiceExpressionParser.CriticalSuccessModifierContext) modifier)
+                    .comparisonSelector())));
         }
         if (modifier instanceof DiceExpressionParser.CriticalFailureModifierContext) {
-            builder.withModifier(new DiceAnnotator(DiceAnnotator.Mode.USE_DROPPED, DiceRoll.MetaData.CRITICAL_FAILURE, getSelector(((DiceExpressionParser.CriticalFailureModifierContext) modifier).comparisonSelector())));
+            builder.withModifier(new DiceAnnotator(DiceRoll.MetaData.CRITICAL_FAILURE, getSelector(
+                ((DiceExpressionParser.CriticalFailureModifierContext) modifier)
+                    .comparisonSelector())));
         }
 
     }
@@ -158,14 +193,15 @@ public class DiceExpressionConverterVisitor extends DiceExpressionBaseVisitor<Di
                                         comparisonSelector.op.getType() == DiceExpressionParser.EQUALS ? ComparisonSelector.Mode.EQUALS :
                                                 comparisonSelector.op.getType() == DiceExpressionParser.GREATER ? ComparisonSelector.Mode.GREATER :
                                                         ComparisonSelector.Mode.GREATER_EQUALS;
-        return new ComparisonSelector(mode, getNumber(comparisonSelector.NUMBER()));
+        return new ComparisonSelector(mode, DropMode.SKIP, getNumber(comparisonSelector.NUMBER()));
     }
 
     private DirectionSelector getSelector(DiceExpressionParser.DirectionSelectorContext directionSelector) {
         DirectionSelector.Direction direction = directionSelector.direction.getType() == DiceExpressionParser.HIGH ?
                 DirectionSelector.Direction.HIGH : DirectionSelector.Direction.LOW;
 
-        return new DirectionSelector(direction, getNumber(directionSelector.NUMBER()));
+        return new DirectionSelector(direction, DropMode.SKIP,
+            getNumber(directionSelector.NUMBER()));
     }
 
     private int getNumber(TerminalNode number) {

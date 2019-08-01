@@ -6,7 +6,7 @@ import io.github.tfriedrichs.dicebot.selector.DiceSelector;
 public class SuccessModifier extends DiceAnnotator {
 
     public SuccessModifier(DiceSelector selector) {
-        super(Mode.SKIP_DROPPED, DiceRoll.MetaData.SUCCESS, selector);
+        super(DiceRoll.MetaData.SUCCESS, selector);
     }
 
 }

@@ -6,6 +6,6 @@ import io.github.tfriedrichs.dicebot.selector.DiceSelector;
 public class DropModifier extends DiceAnnotator {
 
     public DropModifier(DiceSelector selector) {
-        super(Mode.SKIP_DROPPED, DiceRoll.MetaData.DROPPED, selector);
+        super(DiceRoll.MetaData.DROPPED, selector);
     }
 }
