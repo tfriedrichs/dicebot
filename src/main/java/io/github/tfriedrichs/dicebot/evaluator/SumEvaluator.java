@@ -5,13 +5,16 @@ import io.github.tfriedrichs.dicebot.result.DiceRoll.MetaData;
 
 import java.util.stream.IntStream;
 
+/**
+ * {@link DiceRollEvaluator} which sums the rolled values to calculate the result.
+ */
 public class SumEvaluator implements DiceRollEvaluator {
 
     @Override
     public int evaluate(DiceRoll roll) {
         return IntStream.range(0, roll.getRolls().length)
-            .filter(index -> !roll.getMetaDataForRoll(index).contains(MetaData.DROPPED))
-            .map(index -> roll.getRolls()[index])
-            .sum();
+                .filter(index -> !roll.getMetaDataForRoll(index).contains(MetaData.DROPPED))
+                .map(index -> roll.getRolls()[index])
+                .sum();
     }
 }

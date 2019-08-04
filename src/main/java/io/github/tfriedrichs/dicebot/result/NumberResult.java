@@ -1,11 +1,19 @@
 package io.github.tfriedrichs.dicebot.result;
 
+/**
+ * {@link DiceResult} from rolling a {@link io.github.tfriedrichs.dicebot.expression.NumberExpression}.
+ */
 public class NumberResult implements DiceResult {
 
     private static final int PRECEDENCE = 100;
 
     private final int value;
 
+    /**
+     * Constructor.
+     *
+     * @param value the stored value
+     */
     public NumberResult(int value) {
         this.value = value;
     }

@@ -2,8 +2,20 @@ package io.github.tfriedrichs.dicebot.result;
 
 import io.github.tfriedrichs.dicebot.operator.BinaryOperator;
 
+/**
+ * {@link DiceResultVisitor} which pretty prints a {@link DiceResult}.
+ * <p>
+ * This visitor observes proper order of operations and only inserts parentheses if necessary.
+ * Dice rolls are expanded, so that every roll is visible. Any metadata is ignored by this representation.
+ */
 public class DiceResultPrettyPrinter implements DiceResultVisitor<String> {
 
+    /**
+     * Pretty print a given result.
+     *
+     * @param diceResult the result to print
+     * @return a string representation of the result
+     */
     public String prettyPrint(DiceResult diceResult) {
         return diceResult.getValue() + " = " + visit(diceResult);
     }

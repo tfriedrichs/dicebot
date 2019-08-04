@@ -16,12 +16,21 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.List;
 
+/**
+ * Visitor which transforms an antlr {@link org.antlr.v4.runtime.tree.ParseTree} to a {@link DiceExpression}.
+ */
 public class DiceExpressionConverterVisitor extends DiceExpressionBaseVisitor<DiceExpression> {
 
     private static final int MAX_DEPTH = 100;
     private final RoundingStrategy roundingStrategy;
     private final RandomSource randomSource;
 
+    /**
+     * Constructor.
+     *
+     * @param roundingStrategy the rounding strategy to use
+     * @param randomSource     the random source to use
+     */
     public DiceExpressionConverterVisitor(RoundingStrategy roundingStrategy, RandomSource randomSource) {
         this.roundingStrategy = roundingStrategy;
         this.randomSource = randomSource;

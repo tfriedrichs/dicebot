@@ -2,11 +2,20 @@ package io.github.tfriedrichs.dicebot.result;
 
 import io.github.tfriedrichs.dicebot.operator.UnaryOperator;
 
+/**
+ * {@link DiceResult} from rolling a {@link io.github.tfriedrichs.dicebot.expression.UnaryOperatorExpression}.
+ */
 public class UnaryOperatorResult implements DiceResult {
 
     private final UnaryOperator operator;
     private final DiceResult inner;
 
+    /**
+     * Constructor.
+     *
+     * @param operator the operator of the expression
+     * @param inner    the value of the operand
+     */
     public UnaryOperatorResult(UnaryOperator operator, DiceResult inner) {
         this.operator = operator;
         this.inner = inner;
@@ -22,6 +31,11 @@ public class UnaryOperatorResult implements DiceResult {
         return visitor.visitUnaryOperator(this);
     }
 
+    /**
+     * Gets the operands result.
+     *
+     * @return the result of the operand
+     */
     public DiceResult getInner() {
         return inner;
     }

@@ -10,19 +10,51 @@ import io.github.tfriedrichs.dicebot.source.ThreadLocalRandomSource;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
-
+/**
+ * Interface for parts of a dice expression.
+ */
 public interface DiceExpression {
 
-    DiceResult roll();
-
+    /**
+     * Parse a string into a dice expression using the default rounding strategy and random source.
+     *
+     * @param input the input string
+     * @return a dice expression representing the input
+     */
     static DiceExpression parse(String input) {
         return parse(RoundingStrategy.DOWN, new ThreadLocalRandomSource(), input);
     }
 
+    /**
+     * Parse a string into a dice expression using the default rounding strategy and a given random source.
+     *
+     * @param randomSource the random source to use
+     * @param input        the input string
+     * @return a dice expression representing the input
+     */
     static DiceExpression parse(RandomSource randomSource, String input) {
         return parse(RoundingStrategy.DOWN, randomSource, input);
     }
 
+    /**
+     * Parse a string into a dice expression using a given rounding strategy and the default random source.
+     *
+     * @param roundingStrategy the rounding strategy
+     * @param input            the input string
+     * @return a dice expression representing the input
+     */
+    static DiceExpression parse(RoundingStrategy roundingStrategy, String input) {
+        return parse(roundingStrategy, new ThreadLocalRandomSource(), input);
+    }
+
+    /**
+     * Parse a string into a dice expression using given rounding strategy and random source.
+     *
+     * @param roundingStrategy the rounding strategy
+     * @param randomSource the random source
+     * @param input the input string
+     * @return a dice expression representing the input
+     */
     static DiceExpression parse(RoundingStrategy roundingStrategy, RandomSource randomSource, String input) {
         DiceExpressionLexer lexer = new DiceExpressionLexer(CharStreams.fromString(input));
         DiceExpressionParser parser = new DiceExpressionParser(new CommonTokenStream(lexer));
@@ -30,5 +62,12 @@ public interface DiceExpression {
         DiceExpressionParser.ParseContext tree = parser.parse();
         return visitor.visit(tree);
     }
+
+    /**
+     * Rolls the expression und gets the result.
+     *
+     * @return the result
+     */
+    DiceResult roll();
 
 }

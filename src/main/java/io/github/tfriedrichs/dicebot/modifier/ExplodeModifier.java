@@ -8,6 +8,16 @@ import io.github.tfriedrichs.dicebot.source.Die;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * {@link DiceRollModifier} which rolls a new die for each selected dice, repeating this process
+ * until no matches are left or the maximum explode depth has been reached.
+ * <p>
+ * Example:
+ * <p>
+ * The selector selects all dice greater or equal to 5. The initial roll of 4d6 is [5, 2, 6, 4]. The selector selects
+ * the indices 0 and 2. Two new rolls [6, 4] are rolled. The 6 is matched again and one new die [2] is rolled.
+ * The results are then concatenated to the result [5, 2, 6, 4, 6, 5, 2].
+ */
 public class ExplodeModifier implements DiceRollModifier {
 
     private final int maxDepth;

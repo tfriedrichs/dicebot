@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.function.IntUnaryOperator;
 import java.util.stream.IntStream;
 
+/**
+ * A representation a type of die. It consists of a number of sides, a source of randomness,
+ * and a mapper which maps from results ranging from 0 to number of sides to the output domain.
+ */
 public class Die {
 
     public static final Die D4 = new Die(new ThreadLocalRandomSource(), 4);
@@ -23,6 +27,12 @@ public class Die {
     private final int min;
     private final int max;
 
+    /**
+     * Constructor of a die type with given sides.
+     *
+     * @param randomSource the source of randomness
+     * @param sides        the number of side
+     */
     public Die(RandomSource randomSource, Collection<Integer> sides) {
         if (sides.isEmpty()) {
             throw new IllegalArgumentException("Number of sides must be positive.");
@@ -35,6 +45,12 @@ public class Die {
         this.resultMapper = choices::get;
     }
 
+    /**
+     * Constructor of a die type with sides from 0 to {@code numberOfSides}.
+     *
+     * @param randomSource the source of randomness
+     * @param numberOfSides the number of side
+     */
     public Die(RandomSource randomSource, int numberOfSides) {
         if (numberOfSides < 1) {
             throw new IllegalArgumentException("Number of sides must be positive.");
@@ -46,22 +62,48 @@ public class Die {
         this.resultMapper = i -> i;
     }
 
+    /**
+     * Roll this die once.
+     *
+     * @return the rolled value
+     */
     public int roll() {
         return resultMapper.applyAsInt(randomSource.get(1, 1, numberOfSides + 1).sum());
     }
 
+    /**
+     * Roll this die for {@code numberOfRolls} times.
+     *
+     * @param numberOfRolls the number of rolls
+     * @return a stream of the rolled values
+     */
     public IntStream roll(int numberOfRolls) {
         return randomSource.get(numberOfRolls, 1, numberOfSides + 1).map(resultMapper);
     }
 
+    /**
+     * Gets the number of sides.
+     *
+     * @return the number of sides
+     */
     public int getNumberOfSides() {
         return numberOfSides;
     }
 
+    /**
+     * Gets the minimum possible value.
+     *
+     * @return the minimal possible value
+     */
     public int getMin() {
         return min;
     }
 
+    /**
+     * Gets the maximum possible value.
+     *
+     * @return the maximum possible value
+     */
     public int getMax() {
         return max;
     }
