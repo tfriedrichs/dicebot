@@ -1,7 +1,7 @@
 package io.github.tfriedrichs.dicebot.selector;
 
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
-
+import io.github.tfriedrichs.dicebot.result.DiceRoll.MetaData;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -13,6 +13,7 @@ import java.util.stream.Stream;
  */
 public class MetadataSelector implements DiceSelector {
 
+    private final DropMode dropMode;
     private final Mode mode;
     private final DiceRoll.MetaData[] metaData;
 
@@ -22,14 +23,21 @@ public class MetadataSelector implements DiceSelector {
      * @param mode     the selection mode
      * @param metaData the metadata to compare against
      */
-    public MetadataSelector(Mode mode, DiceRoll.MetaData... metaData) {
+    public MetadataSelector(Mode mode,
+        DropMode dropMode,
+        MetaData... metaData) {
         this.mode = mode;
+        this.dropMode = dropMode;
         this.metaData = metaData;
     }
 
     @Override
     public IntStream select(DiceRoll roll) {
         IntStream indices = IntStream.range(0, roll.getRolls().length);
+        if (dropMode == DropMode.SKIP) {
+            indices = indices
+                .filter(index -> !roll.getMetaDataForRoll(index).contains(MetaData.DROPPED));
+        }
         switch (mode) {
             case ALL:
                 return indices.filter(index -> Stream.of(metaData).allMatch(meta -> roll.getMetaDataForRoll(index).contains(meta)));

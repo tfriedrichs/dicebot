@@ -14,6 +14,6 @@ public class FailureModifier extends DiceAnnotator {
      * @param selector the selector
      */
     public FailureModifier(DiceSelector selector) {
-        super(Mode.SKIP_DROPPED, DiceRoll.MetaData.FAILURE, selector);
+        super(DiceRoll.MetaData.FAILURE, selector);
     }
 }

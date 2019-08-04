@@ -1,9 +1,10 @@
 package io.github.tfriedrichs.dicebot.selector;
 
-import io.github.tfriedrichs.dicebot.result.DiceRoll;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+
+import io.github.tfriedrichs.dicebot.result.DiceRoll;
+import io.github.tfriedrichs.dicebot.selector.DiceSelector.DropMode;
+import org.junit.jupiter.api.Test;
 
 class MetadataSelectorTest {
 
@@ -17,7 +18,8 @@ class MetadataSelectorTest {
         roll.addMetaDataToRoll(1, DiceRoll.MetaData.EXPLODED);
         roll.addMetaDataToRoll(2, DiceRoll.MetaData.EXPLODED);
 
-        MetadataSelector selector = new MetadataSelector(MetadataSelector.Mode.ALL, DiceRoll.MetaData.ADDED, DiceRoll.MetaData.EXPLODED, DiceRoll.MetaData.DROPPED);
+        MetadataSelector selector = new MetadataSelector(MetadataSelector.Mode.ALL, DropMode.IGNORE,
+            DiceRoll.MetaData.ADDED, DiceRoll.MetaData.EXPLODED, DiceRoll.MetaData.DROPPED);
         assertArrayEquals(new int[]{1}, selector.select(roll).toArray());
     }
 
@@ -31,7 +33,9 @@ class MetadataSelectorTest {
         roll.addMetaDataToRoll(1, DiceRoll.MetaData.EXPLODED);
         roll.addMetaDataToRoll(2, DiceRoll.MetaData.EXPLODED);
 
-        MetadataSelector selector = new MetadataSelector(MetadataSelector.Mode.SOME, DiceRoll.MetaData.ADDED, DiceRoll.MetaData.EXPLODED, DiceRoll.MetaData.DROPPED);
+        MetadataSelector selector = new MetadataSelector(MetadataSelector.Mode.SOME,
+            DropMode.IGNORE,
+            DiceRoll.MetaData.ADDED, DiceRoll.MetaData.EXPLODED, DiceRoll.MetaData.DROPPED);
         assertArrayEquals(new int[]{0, 1, 2}, selector.select(roll).toArray());
     }
 
@@ -45,7 +49,8 @@ class MetadataSelectorTest {
         roll.addMetaDataToRoll(1, DiceRoll.MetaData.EXPLODED);
         roll.addMetaDataToRoll(2, DiceRoll.MetaData.EXPLODED);
 
-        MetadataSelector selector = new MetadataSelector(MetadataSelector.Mode.NONE, DiceRoll.MetaData.ADDED, DiceRoll.MetaData.EXPLODED, DiceRoll.MetaData.DROPPED);
+        MetadataSelector selector = new MetadataSelector(MetadataSelector.Mode.NONE, DropMode.SKIP,
+            DiceRoll.MetaData.ADDED, DiceRoll.MetaData.EXPLODED, DiceRoll.MetaData.DROPPED);
         assertArrayEquals(new int[]{3}, selector.select(roll).toArray());
     }
 

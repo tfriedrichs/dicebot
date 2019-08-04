@@ -14,7 +14,7 @@ public class SuccessModifier extends DiceAnnotator {
      * @param selector the selector
      */
     public SuccessModifier(DiceSelector selector) {
-        super(Mode.SKIP_DROPPED, DiceRoll.MetaData.SUCCESS, selector);
+        super(DiceRoll.MetaData.SUCCESS, selector);
     }
 
 }

@@ -14,6 +14,6 @@ public class KeepModifier extends DiceAnnotator {
      * @param selector the selector
      */
     public KeepModifier(DiceSelector selector) {
-        super(Mode.SKIP_DROPPED, MetaData.DROPPED, selector.inverse());
+        super(MetaData.DROPPED, selector.inverse());
     }
 }
