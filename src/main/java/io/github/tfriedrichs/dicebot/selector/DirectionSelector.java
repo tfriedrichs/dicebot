@@ -2,6 +2,7 @@ package io.github.tfriedrichs.dicebot.selector;
 
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
 import io.github.tfriedrichs.dicebot.result.DiceRoll.MetaData;
+
 import java.util.Comparator;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -25,6 +26,7 @@ public class DirectionSelector implements DiceSelector {
      * Constructor.
      *
      * @param direction            the direction
+     * @param dropMode the drop strategy
      * @param numberOfDiceToReturn the number of dice this selector returns
      * @throws IllegalArgumentException if the number of dice to keep is negative
      */

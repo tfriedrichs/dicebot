@@ -2,6 +2,7 @@ package io.github.tfriedrichs.dicebot.selector;
 
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
 import io.github.tfriedrichs.dicebot.result.DiceRoll.MetaData;
+
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -21,6 +22,7 @@ public class MetadataSelector implements DiceSelector {
      * Constructor.
      *
      * @param mode     the selection mode
+     * @param dropMode the drop strategy
      * @param metaData the metadata to compare against
      */
     public MetadataSelector(Mode mode,

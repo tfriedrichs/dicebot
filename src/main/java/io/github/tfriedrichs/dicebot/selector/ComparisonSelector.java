@@ -2,6 +2,7 @@ package io.github.tfriedrichs.dicebot.selector;
 
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
 import io.github.tfriedrichs.dicebot.result.DiceRoll.MetaData;
+
 import java.util.function.BiPredicate;
 import java.util.stream.IntStream;
 
@@ -18,6 +19,7 @@ public class ComparisonSelector implements DiceSelector {
      * Constructor.
      *
      * @param mode            the comparison mode
+     * @param dropMode        the drop strategy
      * @param comparisonPoint the value to compare against
      */
     public ComparisonSelector(Mode mode,
