@@ -7,6 +7,8 @@ plugins {
     id "org.sonarqube" version "2.7"
 }
 
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+
 group 'io.github.tfriedrichs'
 archivesBaseName = "dicebot"
 version '1.0-SNAPSHOT'
@@ -54,3 +56,6 @@ signing {
     sign configurations.archives
 }
 
+tasks.withType(Sign) {
+    onlyIf { !version.endsWith("SNAPSHOT") }
+}
