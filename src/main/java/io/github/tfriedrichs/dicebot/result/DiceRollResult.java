@@ -3,7 +3,7 @@ package io.github.tfriedrichs.dicebot.result;
 import io.github.tfriedrichs.dicebot.result.DiceRoll.MetaData;
 
 import java.util.Arrays;
-import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * {@link DiceResult} from rolling a {@link io.github.tfriedrichs.dicebot.expression.DiceRollExpression}.
@@ -41,7 +41,7 @@ public class DiceRollResult implements DiceResult {
      * @param index the index of the roll
      * @return the metadata
      */
-    public EnumSet<MetaData> getMetaDataForRoll(int index) {
+    public Set<MetaData> getMetaDataForRoll(int index) {
         return rolls.getMetaDataForRoll(index);
     }
 

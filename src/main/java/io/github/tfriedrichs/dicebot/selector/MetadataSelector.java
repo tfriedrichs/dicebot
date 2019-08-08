@@ -48,7 +48,7 @@ public class MetadataSelector implements DiceSelector {
             case NONE:
                 return indices.filter(index -> Stream.of(metaData).noneMatch(meta -> roll.getMetaDataForRoll(index).contains(meta)));
         }
-        return null;
+        return indices;
     }
 
     /**

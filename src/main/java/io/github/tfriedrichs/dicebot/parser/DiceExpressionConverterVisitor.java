@@ -2,19 +2,8 @@ package io.github.tfriedrichs.dicebot.parser;
 
 import io.github.tfriedrichs.dicebot.evaluator.SuccessEvaluator;
 import io.github.tfriedrichs.dicebot.evaluator.SuccessFailureEvaluator;
-import io.github.tfriedrichs.dicebot.expression.BinaryOperatorExpression;
-import io.github.tfriedrichs.dicebot.expression.DiceExpression;
-import io.github.tfriedrichs.dicebot.expression.DiceRollExpression;
-import io.github.tfriedrichs.dicebot.expression.NumberExpression;
-import io.github.tfriedrichs.dicebot.expression.UnaryOperatorExpression;
-import io.github.tfriedrichs.dicebot.modifier.CompoundModifier;
-import io.github.tfriedrichs.dicebot.modifier.DiceAnnotator;
-import io.github.tfriedrichs.dicebot.modifier.DropModifier;
-import io.github.tfriedrichs.dicebot.modifier.ExplodeModifier;
-import io.github.tfriedrichs.dicebot.modifier.FailureModifier;
-import io.github.tfriedrichs.dicebot.modifier.KeepModifier;
-import io.github.tfriedrichs.dicebot.modifier.PenetrateModifier;
-import io.github.tfriedrichs.dicebot.modifier.SuccessModifier;
+import io.github.tfriedrichs.dicebot.expression.*;
+import io.github.tfriedrichs.dicebot.modifier.*;
 import io.github.tfriedrichs.dicebot.operator.BinaryOperator;
 import io.github.tfriedrichs.dicebot.operator.RoundingStrategy;
 import io.github.tfriedrichs.dicebot.operator.UnaryOperator;
@@ -25,8 +14,9 @@ import io.github.tfriedrichs.dicebot.selector.DiceSelector.DropMode;
 import io.github.tfriedrichs.dicebot.selector.DirectionSelector;
 import io.github.tfriedrichs.dicebot.source.Die;
 import io.github.tfriedrichs.dicebot.source.RandomSource;
-import java.util.List;
 import org.antlr.v4.runtime.tree.TerminalNode;
+
+import java.util.List;
 
 /**
  * Visitor which transforms an antlr {@link org.antlr.v4.runtime.tree.ParseTree} to a {@link DiceExpression}.
@@ -128,90 +118,141 @@ public class DiceExpressionConverterVisitor extends DiceExpressionBaseVisitor<Di
 
     private void addModifier(DiceRollExpression.Builder builder, Die die, DiceExpressionParser.ModifierContext modifier) {
         if (modifier instanceof DiceExpressionParser.BraceModifierContext) {
-            addModifier(builder, die, ((DiceExpressionParser.BraceModifierContext) modifier).modifier());
+            buildBraceModifier(builder, die, (DiceExpressionParser.BraceModifierContext) modifier);
         }
         if (modifier instanceof DiceExpressionParser.KeepModifierContext) {
-            builder.withModifier(new KeepModifier(getSelector(((DiceExpressionParser.KeepModifierContext) modifier).directionSelector())));
+            buildKeepHighModifier(builder, (DiceExpressionParser.KeepModifierContext) modifier);
         }
         if (modifier instanceof DiceExpressionParser.DropHighModifierContext) {
-            builder.withModifier(
-                new DropModifier(new DirectionSelector(DirectionSelector.Direction.HIGH,
-                    DropMode.SKIP,
-                    getNumber(((DiceExpressionParser.DropHighModifierContext) modifier).NUMBER())
-                )));
+            buildDropHighModifier(builder, (DiceExpressionParser.DropHighModifierContext) modifier);
         }
         if (modifier instanceof DiceExpressionParser.DropLowModifierContext) {
-            builder.withModifier(
-                new DropModifier(new DirectionSelector(DirectionSelector.Direction.LOW,
-                    DropMode.SKIP,
-                    getNumber(((DiceExpressionParser.DropLowModifierContext) modifier).NUMBER())
-                )));
+            buildDropLowModifier(builder, (DiceExpressionParser.DropLowModifierContext) modifier);
         }
         if (modifier instanceof DiceExpressionParser.SuccessModifierContext) {
-            builder.withModifier(new SuccessModifier(getSelector(
-                ((DiceExpressionParser.SuccessModifierContext) modifier).comparisonSelector(),
-                Mode.GREATER_EQUALS)));
-            builder.withEvaluator(new SuccessEvaluator());
+            buildSuccessModifier(builder, (DiceExpressionParser.SuccessModifierContext) modifier);
         }
         if (modifier instanceof DiceExpressionParser.FailureModifierContext) {
-            builder.withModifier(new FailureModifier(getSelector(
-                ((DiceExpressionParser.FailureModifierContext) modifier).comparisonSelector(),
-                Mode.LESSER_EQUALS)));
-            builder.withEvaluator(new SuccessFailureEvaluator());
+            buildFailureModifier(builder, (DiceExpressionParser.FailureModifierContext) modifier);
         }
         if (modifier instanceof DiceExpressionParser.ExplodeModifierContext) {
-            ComparisonSelector selector =
-                ((DiceExpressionParser.ExplodeModifierContext) modifier).comparisonSelector()
-                    == null ? new ComparisonSelector(ComparisonSelector.Mode.EQUALS,
-                    DropMode.SKIP, die.getMax()
-                ) :
-                    getSelector(((DiceExpressionParser.ExplodeModifierContext) modifier)
-                        .comparisonSelector(), Mode.GREATER_EQUALS);
-            builder.withModifier(new ExplodeModifier(MAX_DEPTH, selector));
+            buildExplodeModifier(builder, die, (DiceExpressionParser.ExplodeModifierContext) modifier);
         }
         if (modifier instanceof DiceExpressionParser.CompoundModifierContext) {
-            ComparisonSelector selector =
-                ((DiceExpressionParser.CompoundModifierContext) modifier).comparisonSelector()
-                    == null ? new ComparisonSelector(ComparisonSelector.Mode.EQUALS,
-                    DropMode.SKIP, die.getMax()
-                ) :
-                    getSelector(((DiceExpressionParser.CompoundModifierContext) modifier)
-                        .comparisonSelector(), Mode.GREATER_EQUALS);
-            builder.withModifier(new CompoundModifier(MAX_DEPTH, selector));
+            buildCompoundModifier(builder, die, (DiceExpressionParser.CompoundModifierContext) modifier);
         }
         if (modifier instanceof DiceExpressionParser.PenetrateModifierContext) {
-            ComparisonSelector selector =
-                ((DiceExpressionParser.PenetrateModifierContext) modifier).comparisonSelector()
-                    == null ? new ComparisonSelector(ComparisonSelector.Mode.EQUALS,
-                    DropMode.SKIP, die.getMax()
-                ) :
-                    getSelector(((DiceExpressionParser.PenetrateModifierContext) modifier)
-                        .comparisonSelector(), Mode.GREATER_EQUALS);
-            builder.withModifier(new PenetrateModifier(MAX_DEPTH, selector));
+            buildPenetrateModifier(builder, die, (DiceExpressionParser.PenetrateModifierContext) modifier);
         }
         if (modifier instanceof DiceExpressionParser.CriticalSuccessModifierContext) {
-            builder.withModifier(new DiceAnnotator(DiceRoll.MetaData.CRITICAL_SUCCESS, getSelector(
-                ((DiceExpressionParser.CriticalSuccessModifierContext) modifier)
-                    .comparisonSelector(), Mode.GREATER_EQUALS)));
+            buildCriticalSuccess(builder, (DiceExpressionParser.CriticalSuccessModifierContext) modifier);
         }
         if (modifier instanceof DiceExpressionParser.CriticalFailureModifierContext) {
-            builder.withModifier(new DiceAnnotator(DiceRoll.MetaData.CRITICAL_FAILURE, getSelector(
-                ((DiceExpressionParser.CriticalFailureModifierContext) modifier)
-                    .comparisonSelector(), Mode.LESSER_EQUALS)));
+            buildCriticalFailure(builder, (DiceExpressionParser.CriticalFailureModifierContext) modifier);
         }
 
+    }
+
+    private void buildBraceModifier(DiceRollExpression.Builder builder, Die die, DiceExpressionParser.BraceModifierContext modifier) {
+        addModifier(builder, die, modifier.modifier());
+    }
+
+    private void buildKeepHighModifier(DiceRollExpression.Builder builder, DiceExpressionParser.KeepModifierContext modifier) {
+        builder.withModifier(new KeepModifier(getSelector(modifier.directionSelector())));
+    }
+
+    private void buildDropHighModifier(DiceRollExpression.Builder builder, DiceExpressionParser.DropHighModifierContext modifier) {
+        builder.withModifier(
+                new DropModifier(new DirectionSelector(DirectionSelector.Direction.HIGH,
+                        DropMode.SKIP,
+                        getNumber(modifier.NUMBER())
+                )));
+    }
+
+    private void buildDropLowModifier(DiceRollExpression.Builder builder, DiceExpressionParser.DropLowModifierContext modifier) {
+        builder.withModifier(
+                new DropModifier(new DirectionSelector(DirectionSelector.Direction.LOW,
+                        DropMode.SKIP,
+                        getNumber(modifier.NUMBER())
+                )));
+    }
+
+    private void buildSuccessModifier(DiceRollExpression.Builder builder, DiceExpressionParser.SuccessModifierContext modifier) {
+        builder.withModifier(new SuccessModifier(getSelector(
+                modifier.comparisonSelector(),
+                Mode.GREATER_EQUALS)));
+        builder.withEvaluator(new SuccessEvaluator());
+    }
+
+    private void buildFailureModifier(DiceRollExpression.Builder builder, DiceExpressionParser.FailureModifierContext modifier) {
+        builder.withModifier(new FailureModifier(getSelector(
+                modifier.comparisonSelector(),
+                Mode.LESSER_EQUALS)));
+        builder.withEvaluator(new SuccessFailureEvaluator());
+    }
+
+    private void buildExplodeModifier(DiceRollExpression.Builder builder, Die die, DiceExpressionParser.ExplodeModifierContext modifier) {
+        ComparisonSelector selector =
+                modifier.comparisonSelector()
+                        == null ? new ComparisonSelector(Mode.EQUALS,
+                        DropMode.SKIP, die.getMax()
+                ) :
+                        getSelector(modifier
+                                .comparisonSelector(), Mode.GREATER_EQUALS);
+        builder.withModifier(new ExplodeModifier(MAX_DEPTH, selector));
+    }
+
+    private void buildCompoundModifier(DiceRollExpression.Builder builder, Die die, DiceExpressionParser.CompoundModifierContext modifier) {
+        ComparisonSelector selector =
+                modifier.comparisonSelector()
+                        == null ? new ComparisonSelector(Mode.EQUALS,
+                        DropMode.SKIP, die.getMax()
+                ) :
+                        getSelector(modifier
+                                .comparisonSelector(), Mode.GREATER_EQUALS);
+        builder.withModifier(new CompoundModifier(MAX_DEPTH, selector));
+    }
+
+    private void buildPenetrateModifier(DiceRollExpression.Builder builder, Die die, DiceExpressionParser.PenetrateModifierContext modifier) {
+        ComparisonSelector selector =
+                modifier.comparisonSelector()
+                        == null ? new ComparisonSelector(Mode.EQUALS,
+                        DropMode.SKIP, die.getMax()
+                ) :
+                        getSelector(modifier
+                                .comparisonSelector(), Mode.GREATER_EQUALS);
+        builder.withModifier(new PenetrateModifier(MAX_DEPTH, selector));
+    }
+
+    private void buildCriticalSuccess(DiceRollExpression.Builder builder, DiceExpressionParser.CriticalSuccessModifierContext modifier) {
+        builder.withModifier(new DiceAnnotator(DiceRoll.MetaData.CRITICAL_SUCCESS, getSelector(
+                modifier
+                        .comparisonSelector(), Mode.GREATER_EQUALS)));
+    }
+
+    private void buildCriticalFailure(DiceRollExpression.Builder builder, DiceExpressionParser.CriticalFailureModifierContext modifier) {
+        builder.withModifier(new DiceAnnotator(DiceRoll.MetaData.CRITICAL_FAILURE, getSelector(
+                modifier
+                        .comparisonSelector(), Mode.LESSER_EQUALS)));
     }
 
     private ComparisonSelector getSelector(
         DiceExpressionParser.ComparisonSelectorContext comparisonSelector,
         ComparisonSelector.Mode defaultMode) {
-        ComparisonSelector.Mode mode =
-            comparisonSelector.op == null ? defaultMode :
-                        comparisonSelector.op.getType() == DiceExpressionParser.LESSER ? ComparisonSelector.Mode.LESSER :
-                                comparisonSelector.op.getType() == DiceExpressionParser.LESSER_EQUALS ? ComparisonSelector.Mode.LESSER_EQUALS :
-                                        comparisonSelector.op.getType() == DiceExpressionParser.EQUALS ? ComparisonSelector.Mode.EQUALS :
-                                                comparisonSelector.op.getType() == DiceExpressionParser.GREATER ? ComparisonSelector.Mode.GREATER :
-                                                        ComparisonSelector.Mode.GREATER_EQUALS;
+        ComparisonSelector.Mode mode;
+        if (comparisonSelector.op == null) {
+            mode = defaultMode;
+        } else if (comparisonSelector.op.getType() == DiceExpressionParser.LESSER) {
+            mode = Mode.LESSER;
+        } else if (comparisonSelector.op.getType() == DiceExpressionParser.LESSER_EQUALS) {
+            mode = Mode.LESSER_EQUALS;
+        } else if (comparisonSelector.op.getType() == DiceExpressionParser.EQUALS) {
+            mode = Mode.EQUALS;
+        } else if (comparisonSelector.op.getType() == DiceExpressionParser.GREATER) {
+            mode = Mode.GREATER;
+        } else {
+            mode = Mode.GREATER_EQUALS;
+        }
         return new ComparisonSelector(mode, DropMode.SKIP, getNumber(comparisonSelector.NUMBER()));
     }
 
@@ -238,10 +279,8 @@ public class DiceExpressionConverterVisitor extends DiceExpressionBaseVisitor<Di
         }
         if (sides.FATE() != null) {
             return new Die(randomSource, List.of(-1, 0, 1));
-        }
-        if (sides.PERCENT() != null) {
+        } else {
             return new Die(randomSource, 100);
         }
-        return null;
     }
 }

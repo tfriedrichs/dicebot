@@ -2,6 +2,7 @@ package io.github.tfriedrichs.dicebot.result;
 
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Set;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -104,7 +105,7 @@ public class DiceRoll {
      * @param index the index of the roll
      * @return the metadata
      */
-    public EnumSet<MetaData> getMetaDataForRoll(int index) {
+    public Set<MetaData> getMetaDataForRoll(int index) {
         return metaData[index].metaData;
     }
 
@@ -144,7 +145,7 @@ public class DiceRoll {
             this.metaData = EnumSet.of(metaData);
         }
 
-        public DieMetaData(EnumSet<MetaData> metaData) {
+        public DieMetaData(Set<MetaData> metaData) {
             this.metaData = EnumSet.copyOf(metaData);
         }
 

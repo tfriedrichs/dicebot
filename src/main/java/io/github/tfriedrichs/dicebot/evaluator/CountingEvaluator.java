@@ -2,7 +2,7 @@ package io.github.tfriedrichs.dicebot.evaluator;
 
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
 
-import java.util.EnumSet;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 /**
@@ -48,15 +48,13 @@ public class CountingEvaluator implements DiceRollEvaluator {
     }
 
     private int mapIndexToValue(int index, DiceRoll roll) {
-        EnumSet<DiceRoll.MetaData> data = roll.getMetaDataForRoll(index);
+        Set<DiceRoll.MetaData> data = roll.getMetaDataForRoll(index);
         int result = 0;
         if (data.contains(positive)) {
             result++;
         }
-        if (negative != null) {
-            if (data.contains(negative)) {
-                result--;
-            }
+        if (negative != null && data.contains(negative)) {
+            result--;
         }
         return result;
     }

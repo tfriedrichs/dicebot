@@ -45,11 +45,11 @@ public class DiceRollExpression implements DiceExpression {
 
     @Override
     public DiceResult roll() {
-        int numberOfDice = this.numberOfDice.roll().getValue();
-        if (numberOfDice < 0) {
+        int numberOfDiceToRoll = this.numberOfDice.roll().getValue();
+        if (numberOfDiceToRoll < 0) {
             throw new IllegalArgumentException("Number of dice must not be negative");
         }
-        int[] rolls = die.roll(numberOfDice).toArray();
+        int[] rolls = die.roll(numberOfDiceToRoll).toArray();
         DiceRoll result = new DiceRoll(rolls);
         for (DiceRollModifier modifier : modifiers) {
             result = modifier.modifyRoll(result, die);

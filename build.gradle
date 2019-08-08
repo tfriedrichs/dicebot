@@ -1,15 +1,24 @@
 plugins {
     id 'java'
     id 'antlr'
+    id 'maven'
+    id 'signing'
+    id 'jacoco'
+    id "org.sonarqube" version "2.7"
 }
 
 group 'io.github.tfriedrichs'
+archivesBaseName = "dicebot"
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.11
 
 repositories {
     mavenCentral()
+}
+
+jacoco {
+    toolVersion = "0.8.4"
 }
 
 dependencies {
@@ -19,11 +28,29 @@ dependencies {
     antlr "org.antlr:antlr4:4.7.2"
 }
 
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
 test {
     useJUnitPlatform()
 }
 
 generateGrammarSource {
     arguments += ["-visitor", "-no-listener"]
+}
+
+signing {
+    sign configurations.archives
 }
 
