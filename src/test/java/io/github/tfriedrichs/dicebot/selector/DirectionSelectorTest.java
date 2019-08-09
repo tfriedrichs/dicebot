@@ -1,12 +1,12 @@
 package io.github.tfriedrichs.dicebot.selector;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
 import io.github.tfriedrichs.dicebot.selector.DiceSelector.DropMode;
 import io.github.tfriedrichs.dicebot.selector.DirectionSelector.Direction;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DirectionSelectorTest {
 

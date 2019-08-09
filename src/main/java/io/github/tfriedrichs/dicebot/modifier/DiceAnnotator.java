@@ -30,12 +30,4 @@ public class DiceAnnotator implements DiceRollModifier {
         selector.select(roll).forEach(index -> result.addMetaDataToRoll(index, metaData));
         return result;
     }
-
-    /**
-     * Enum for strategies for handling dropped dice.
-     */
-    public enum Mode {
-        USE_DROPPED,
-        SKIP_DROPPED
-    }
 }

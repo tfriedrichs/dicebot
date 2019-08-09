@@ -1,7 +1,5 @@
 package io.github.tfriedrichs.dicebot.evaluator;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import io.github.tfriedrichs.dicebot.modifier.FailureModifier;
 import io.github.tfriedrichs.dicebot.modifier.SuccessModifier;
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
@@ -9,6 +7,8 @@ import io.github.tfriedrichs.dicebot.selector.ComparisonSelector;
 import io.github.tfriedrichs.dicebot.selector.DiceSelector.DropMode;
 import io.github.tfriedrichs.dicebot.source.Die;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SuccessFailureEvaluatorTest {
 

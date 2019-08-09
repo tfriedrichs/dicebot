@@ -43,7 +43,7 @@ public class ExplodeModifier implements DiceRollModifier {
             for (Integer index : explode) {
                 total.addMetaDataToRoll(index + previousLength, MetaData.EXPLODED);
             }
-            previousLength = total.getRolls().length;
+            previousLength = total.getRolls().length - current.getRolls().length;
         }
 
         return total;

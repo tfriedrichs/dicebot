@@ -94,4 +94,47 @@ class DiceExpressionConverterVisitorTest {
         assertEquals(4, expression.roll().getValue());
     }
 
+    @Test
+    void shouldParseMultipleDropModifiers() {
+        RandomSource source = new FixedRandomSource(1, 5, 3, 4);
+        DiceExpression expression = DiceExpression.parse(source, "4d6dhdl");
+        assertEquals(7, expression.roll().getValue());
+    }
+
+    @Test
+    void shouldParseExplodeModifiers() {
+        RandomSource source = new FixedRandomSource(1, 5, 3, 4);
+        DiceExpression expression = DiceExpression.parse(source, "4d6!>=5");
+        assertEquals(14, expression.roll().getValue());
+    }
+
+    @Test
+    void shouldParseExplodeModifiersWithArithmetic() {
+        RandomSource source = new FixedRandomSource(1, 5, 3, 4);
+        DiceExpression expression = DiceExpression.parse(source, "4d6!>=5 - abs(-3)");
+        assertEquals(11, expression.roll().getValue());
+    }
+
+    @Test
+    void shouldParseFateDice() {
+        RandomSource source = new FixedRandomSource(0, 1, 2, 2);
+        DiceExpression expression = DiceExpression.parse(source, "4dF");
+        assertEquals(1, expression.roll().getValue());
+    }
+
+    @Test
+    void shouldParsePercentileDice() {
+        RandomSource source = new FixedRandomSource(70);
+        DiceExpression expression = DiceExpression.parse(source, "d%");
+        assertEquals(70, expression.roll().getValue());
+    }
+
+    @Test
+    void shouldParseOrderedExplodeModifiers() {
+        RandomSource source = new FixedRandomSource(5, 5, 6, 1);
+        DiceExpression expression = DiceExpression.parse(source, "d6!>=5!c>5");
+        assertEquals(22, expression.roll().getValue());
+    }
+
+
 }

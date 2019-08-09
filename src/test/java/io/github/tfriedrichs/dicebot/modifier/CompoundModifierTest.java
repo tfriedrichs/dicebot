@@ -1,8 +1,5 @@
 package io.github.tfriedrichs.dicebot.modifier;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
 import io.github.tfriedrichs.dicebot.selector.ComparisonSelector;
 import io.github.tfriedrichs.dicebot.selector.DiceSelector.DropMode;
@@ -10,6 +7,9 @@ import io.github.tfriedrichs.dicebot.source.Die;
 import io.github.tfriedrichs.dicebot.source.FixedRandomSource;
 import io.github.tfriedrichs.dicebot.source.RandomSource;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CompoundModifierTest {
 

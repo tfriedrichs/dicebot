@@ -1,17 +1,15 @@
 package io.github.tfriedrichs.dicebot.modifier;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
 import io.github.tfriedrichs.dicebot.result.DiceRoll.MetaData;
 import io.github.tfriedrichs.dicebot.selector.DiceSelector.DropMode;
 import io.github.tfriedrichs.dicebot.selector.DirectionSelector;
 import io.github.tfriedrichs.dicebot.source.Die;
-import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
+
+import java.util.stream.IntStream;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class KeepModifierTest {
 

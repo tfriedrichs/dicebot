@@ -1,11 +1,11 @@
 package io.github.tfriedrichs.dicebot.selector;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-
 import io.github.tfriedrichs.dicebot.result.DiceRoll;
 import io.github.tfriedrichs.dicebot.selector.ComparisonSelector.Mode;
 import io.github.tfriedrichs.dicebot.selector.DiceSelector.DropMode;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 class ComparisonSelectorTest {
 

@@ -1,13 +1,13 @@
 package io.github.tfriedrichs.dicebot;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import io.github.tfriedrichs.dicebot.expression.DiceExpression;
 import io.github.tfriedrichs.dicebot.result.DiceResult;
 import io.github.tfriedrichs.dicebot.result.DiceResultPrettyPrinter;
 import io.github.tfriedrichs.dicebot.source.FixedRandomSource;
 import io.github.tfriedrichs.dicebot.source.RandomSource;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AcceptanceTest {
 
