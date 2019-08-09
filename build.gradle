@@ -24,7 +24,7 @@ jacoco {
 }
 
 dependencies {
-    testCompile("org.mockito:mockito-core:2.+")
+    testCompile("org.mockito:mockito-core:3.0.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.0")
     antlr "org.antlr:antlr4:4.7.2"
@@ -66,11 +66,11 @@ uploadArchives {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
             repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
+                authentication(userName: findProperty(ossrhUsername), password: findProperty(ossrhPassword))
             }
 
             snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
+                authentication(userName: findProperty(ossrhUsername), password: findProperty(ossrhPassword))
             }
 
             pom.project {
