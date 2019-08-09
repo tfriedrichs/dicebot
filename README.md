@@ -18,7 +18,25 @@ String pretty = new DiceResultPrettyPrinter().prettyPrint(expression.roll());
 ```
 # How to get
 
-TODO
+Dicebot is most easily accessible from maven central.
+
+```
+<dependency>
+    <groupId>io.github.tfriedrichs</groupId>
+    <artifactId>dicebot</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
+Currently users need to also provide a dependency to the ANTLR4 runtime. This will be fixed in a future release.
+```
+<dependency>
+    <groupId>org.antlr</groupId>
+    <artifactId>antlr4-runtime</artifactId>
+    <version>4.7.2</version>
+</dependency>
+```
+
 
 # Examples
 
