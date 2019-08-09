@@ -11,7 +11,7 @@ ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
 group 'io.github.tfriedrichs'
 archivesBaseName = "dicebot"
-version '1.0-SNAPSHOT'
+version '1.0.0'
 
 sourceCompatibility = 1.11
 
@@ -57,5 +57,49 @@ signing {
 }
 
 tasks.withType(Sign) {
-    onlyIf { !version.endsWith("SNAPSHOT") }
+    onlyIf { !System.getenv("TRAVIS") }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'io.github.tfriedrichs.dicebot'
+                packaging 'jar'
+                description 'DiceBot is a java library for parsing and evaluating dice expressions like they occur in Pen&Paper games.'
+                url 'https://github.com/tfriedrichs/dicebot'
+
+                scm {
+                    connection 'scm:git:git//github.com/tfriedrichs/dicebot.git'
+                    developerConnection 'scm:git:ssh://github.com:tfriedrichs/dicebot.git'
+                    url 'https://github.com/tfriedrichs/dicebot/tree/master'
+                }
+
+                licenses {
+                    license {
+                        name 'MIT License'
+                        url 'https://opensource.org/licenses/MIT'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'tfriedrichs'
+                        name 'Torben Friedrichs'
+                        email 'friedrichs.torben@gmail.com'
+                    }
+                }
+            }
+        }
+    }
 }
